@@ -1,0 +1,124 @@
+/* Landing page: hero, how-it-works steps, directory, and the call to action. */
+
+.hero {
+  padding-block: var(--space-16) var(--space-12);
+  background:
+    radial-gradient(900px 400px at 85% -10%, var(--accent-soft), transparent 60%), var(--bg);
+}
+
+.hero-inner {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 760px;
+}
+
+.hero-title {
+  font-size: clamp(2rem, 1.2rem + 3vw, var(--font-size-3xl));
+  letter-spacing: -0.02em;
+}
+
+.hero-body {
+  font-size: var(--font-size-lg);
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+.find-form {
+  margin-block-start: var(--space-6);
+  max-width: 560px;
+}
+
+.find-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.find-row input {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.section {
+  padding-block: var(--space-12);
+}
+
+.how {
+  padding-block-start: var(--space-8);
+}
+
+.steps {
+  display: grid;
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.step-card {
+  position: relative;
+  padding: var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.step-card h3 {
+  margin-block-end: var(--space-2);
+}
+
+.step-card p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-block-end: var(--space-3);
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+}
+
+.cta-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+  padding: var(--space-8);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.cta-inner p {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.cta-inner .section-title {
+  margin-block-end: var(--space-2);
+}
+
+.faq {
+  padding-block-start: 0;
+}
+
+.faq .section-title {
+  margin-block-end: var(--space-4);
+}
+
+#directory {
+  padding-block-start: var(--space-8);
+}

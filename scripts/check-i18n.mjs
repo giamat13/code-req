@@ -17,6 +17,9 @@ const locales = (await readdir(localeDir))
   .map((file) => file.slice(0, -".json".length));
 
 const errors = [];
+
+// A key with plural forms has no entry of its own, so its ".other" form counts as the key.
+const hasKey = (dictionary, key) => key in dictionary || `${key}.other` in dictionary;
 const placeholders = (text) =>
   [...text.matchAll(/\{(\w+)\}/g)]
     .map((match) => match[1])
@@ -63,7 +66,7 @@ for (const file of sourceFiles) {
     ),
   ];
   for (const key of used) {
-    if (key && !(key in base)) errors.push(`${file.slice(root.length)}: unknown key "${key}"`);
+    if (key && !hasKey(base, key)) errors.push(`${file.slice(root.length)}: unknown key "${key}"`);
   }
 }
 

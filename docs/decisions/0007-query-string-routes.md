@@ -5,7 +5,7 @@
 
 ## Context
 
-The site must work on GitHub Pages as well as Firebase Hosting. GitHub Pages serves a project site under a subpath such as `/apprequest/`, cannot rewrite paths to a single entry page, and cannot set response headers. Path-based routes such as `/d/<username>` therefore fail on GitHub Pages without a single-page-app redirect workaround.
+The site must work on GitHub Pages as well as Firebase Hosting. GitHub Pages serves a project site under a subpath such as `/code-req/`, cannot rewrite paths to a single entry page, and cannot set response headers. Path-based routes such as `/d/<username>` therefore fail on GitHub Pages without a single-page-app redirect workaround.
 
 ## Decision
 

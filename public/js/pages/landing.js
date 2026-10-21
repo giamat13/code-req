@@ -1,13 +1,16 @@
 import { $, h } from "../core/dom.js";
+import { isConfigured } from "../core/config.js";
+import { formatDate } from "../core/format.js";
 import { t } from "../core/i18n.js";
-import { developerUrl } from "../core/router.js";
 import { startPage, setStatus } from "../core/page.js";
+import { developerUrl, trackUrl } from "../core/router.js";
 import { avatar, emptyState, platformChips, skeletonRows } from "../components/ui.js";
 import { PAGE_SIZE } from "../domain/constants.js";
 import { toMillis } from "../domain/time.js";
 import { extractUsername, usernameError } from "../domain/usernames.js";
+import { watchSignIn } from "../services/auth.js";
 import { findDeveloper, listDevelopers } from "../services/developers.js";
-import { isConfigured } from "../core/config.js";
+import { listMyRequests } from "../services/requests.js";
 
 const state = {
   developers: [],
@@ -61,7 +64,6 @@ function visibleDevelopers() {
 function renderDirectory() {
   const grid = $("#directory-grid");
   const list = visibleDevelopers();
-  const shown = list.slice(0, state.shown);
   if (state.developers.length === 0) {
     grid.replaceChildren(
       emptyState({
@@ -73,7 +75,7 @@ function renderDirectory() {
   } else if (list.length === 0) {
     grid.replaceChildren(emptyState({ iconName: "search", title: t("landing.noMatches") }));
   } else {
-    grid.replaceChildren(...shown.map(developerCard));
+    grid.replaceChildren(...list.slice(0, state.shown).map(developerCard));
   }
   $("#load-more").hidden = list.length <= state.shown;
   $("#directory-count").textContent = t("landing.directoryCount", { count: list.length });
@@ -87,6 +89,34 @@ async function loadDirectory() {
     renderDirectory();
   } catch {
     grid.replaceChildren(emptyState({ iconName: "alert", title: t("errors.network") }));
+  }
+}
+
+function myRequestItem(request) {
+  return h(
+    "li",
+    { class: "link-item" },
+    h("a", { href: trackUrl(request.id) }, request.appName),
+    " ",
+    h("span", { class: "muted" }, t(`status.${request.status}`)),
+    " ",
+    h("span", { class: "muted" }, formatDate(request.createdAt)),
+  );
+}
+
+// Shows requests sent from this browser's anonymous session. The section stays hidden when there are none.
+async function loadMyRequests(user) {
+  const section = $("#my-requests");
+  if (!user) {
+    section.hidden = true;
+    return;
+  }
+  try {
+    const requests = await listMyRequests(user.uid);
+    section.hidden = requests.length === 0;
+    $("#my-requests-list").replaceChildren(...requests.map(myRequestItem));
+  } catch {
+    section.hidden = true;
   }
 }
 
@@ -141,10 +171,12 @@ function wireDirectory() {
 }
 
 startPage(() => {
-  $("#find-form").addEventListener("submit", findByUsername);
-  $("#find-form").elements.username.addEventListener("input", (event) => {
+  const form = $("#find-form");
+  form.addEventListener("submit", findByUsername);
+  form.elements.username.addEventListener("input", (event) => {
     event.currentTarget.removeAttribute("aria-invalid");
   });
   wireDirectory();
+  if (isConfigured) watchSignIn((user) => loadMyRequests(user));
   return loadDirectory();
 });

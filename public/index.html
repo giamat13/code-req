@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com http://127.0.0.1:9099 http://127.0.0.1:8080 ws://127.0.0.1:8080 http://localhost:9099 http://localhost:8080 ws://localhost:8080; frame-src https://*.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <title data-i18n="landing.pageTitle">code-req · Ask a developer to build your app</title>
+    <meta name="description" data-i18n-attr="content:landing.metaDescription" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta property="og:title" content="code-req" />
+    <meta property="og:description" data-i18n-attr="content:landing.metaDescription" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="__SITE_URL__" />
+    <meta property="og:image" content="__SITE_URL__assets/og-image.png" />
+    <link rel="canonical" href="__SITE_URL__" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./css/tokens.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/components.css" />
+    <link rel="stylesheet" href="./css/pages/landing.css" />
+  </head>
+  <body class="page-landing">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header-inner">
+        <a class="brand" href="index.html" data-i18n="common.appName">code-req</a>
+        <button
+          id="nav-toggle"
+          class="icon-button nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          data-i18n-attr="aria-label:nav.menu"
+        >
+          <span aria-hidden="true">☰</span>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Main" data-open="false">
+          <a href="#directory" data-i18n="nav.directory">Developers</a>
+          <a href="dashboard.html" data-nav data-i18n="nav.forDevelopers">For developers</a>
+          <a href="privacy.html" data-nav data-i18n="nav.privacy">Privacy</a>
+        </nav>
+        <div class="site-controls">
+          <select
+            id="language-select"
+            class="select-compact"
+            data-i18n-attr="aria-label:nav.language"
+          ></select>
+          <button id="theme-toggle" class="icon-button" type="button"></button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero">
+        <div class="container hero-inner">
+          <p class="eyebrow" data-i18n="landing.eyebrow">Free and open source</p>
+          <h1 class="hero-title" data-i18n="landing.heroTitle">
+            Ask a developer to build your app
+          </h1>
+          <p class="hero-body" data-i18n="landing.heroBody">
+            Describe the app you want, pick a developer, and follow your request until it ships. No
+            account is needed to send a request.
+          </p>
+
+          <form id="find-form" class="find-form" role="search" novalidate>
+            <div class="field">
+              <label class="field-label" for="find-username" data-i18n="landing.findLabel"
+                >Developer username or link</label
+              >
+              <div class="find-row">
+                <input
+                  id="find-username"
+                  name="username"
+                  type="text"
+                  autocomplete="off"
+                  spellcheck="false"
+                  aria-describedby="find-help"
+                  data-i18n-attr="placeholder:landing.findPlaceholder"
+                  placeholder="@username"
+                />
+                <button class="btn btn-primary" type="submit" data-i18n="landing.findButton">
+                  Find developer
+                </button>
+              </div>
+              <p id="find-help" class="field-help" data-i18n="landing.findHelp">
+                Paste a username, or the link a developer shared with you.
+              </p>
+              <p id="find-status" class="form-status" role="status" aria-live="polite" hidden></p>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <section class="section how" aria-labelledby="how-title">
+        <div class="container">
+          <h2 id="how-title" class="section-title" data-i18n="landing.howTitle">How it works</h2>
+          <ol class="steps">
+            <li class="step-card">
+              <span class="step-number" aria-hidden="true">1</span>
+              <h3 data-i18n="landing.step1Title">Choose a developer</h3>
+              <p data-i18n="landing.step1Body">
+                Use a developer's link, or search the directory below.
+              </p>
+            </li>
+            <li class="step-card">
+              <span class="step-number" aria-hidden="true">2</span>
+              <h3 data-i18n="landing.step2Title">Describe the app</h3>
+              <p data-i18n="landing.step2Body">
+                Write what you want, pick the platforms, and attach an icon if you have one.
+              </p>
+            </li>
+            <li class="step-card">
+              <span class="step-number" aria-hidden="true">3</span>
+              <h3 data-i18n="landing.step3Title">Follow along</h3>
+              <p data-i18n="landing.step3Body">
+                Keep your tracking link. You can read the quote, message the developer, and change
+                details until work starts.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section id="my-requests" class="section" aria-labelledby="my-requests-title" hidden>
+        <div class="container">
+          <h2 id="my-requests-title" class="section-title" data-i18n="landing.myRequestsTitle">
+            Your requests on this device
+          </h2>
+          <p class="section-lead" data-i18n="landing.myRequestsBody">
+            Requests you sent from this browser. Clearing browser data removes this list, but the
+            tracking links still work.
+          </p>
+          <ul id="my-requests-list" class="link-list"></ul>
+        </div>
+      </section>
+
+      <section id="directory" class="section" aria-labelledby="directory-title">
+        <div class="container">
+          <h2 id="directory-title" class="section-title" data-i18n="landing.directoryTitle">
+            Developers accepting requests
+          </h2>
+          <div class="directory-toolbar">
+            <div class="field">
+              <label class="field-label" for="directory-search" data-i18n="landing.directorySearch"
+                >Search</label
+              >
+              <input
+                id="directory-search"
+                type="search"
+                autocomplete="off"
+                data-i18n-attr="placeholder:landing.directorySearchPlaceholder"
+                placeholder="Name, username, or platform"
+              />
+            </div>
+            <div class="field">
+              <label class="field-label" for="directory-sort" data-i18n="landing.directorySort"
+                >Sort</label
+              >
+              <select id="directory-sort" class="select-compact">
+                <option value="name" data-i18n="landing.sortName">Name</option>
+                <option value="newest" data-i18n="landing.sortNewest">Newest</option>
+              </select>
+            </div>
+          </div>
+          <p id="directory-count" class="muted" role="status" aria-live="polite"></p>
+          <div id="directory-grid" class="directory-grid" aria-live="polite"></div>
+          <div class="load-more">
+            <button
+              id="load-more"
+              class="btn btn-secondary"
+              type="button"
+              hidden
+              data-i18n="landing.loadMore"
+            >
+              Load more
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta" aria-labelledby="cta-title">
+        <div class="container cta-inner">
+          <div>
+            <h2 id="cta-title" class="section-title" data-i18n="landing.forDevelopersTitle">
+              Are you a developer?
+            </h2>
+            <p data-i18n="landing.forDevelopersBody">
+              Create a profile with a username, share your link, and receive requests in one
+              dashboard.
+            </p>
+          </div>
+          <a class="btn btn-primary" href="dashboard.html" data-i18n="landing.becomeDeveloper"
+            >Set up my profile</a
+          >
+        </div>
+      </section>
+
+      <section class="section faq" aria-labelledby="faq-title">
+        <div class="container">
+          <h2 id="faq-title" class="section-title" data-i18n="landing.faqTitle">Questions</h2>
+          <details class="faq-item">
+            <summary data-i18n="landing.faq1Q">Is it free?</summary>
+            <p data-i18n="landing.faq1A">
+              Yes. The site and its source code are free. Developers set their own prices.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="landing.faq2Q">Who can see my request?</summary>
+            <p data-i18n="landing.faq2A">
+              The developer you chose sees it. Contact details you add are visible only to that
+              developer.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="landing.faq3Q">Can I change or cancel my request?</summary>
+            <p data-i18n="landing.faq3A">
+              You can edit it while it is new or in progress, and you can cancel it while it is new.
+            </p>
+          </details>
+          <details class="faq-item">
+            <summary data-i18n="landing.faq4Q">Why should I keep the tracking link?</summary>
+            <p data-i18n="landing.faq4A">
+              The tracking link is the only way back to your request unless you use the same
+              browser. Anyone with the link can see that request, so keep it private.
+            </p>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>
+          <span data-i18n="common.license">MIT licensed.</span>
+          <a href="https://github.com/giamat13/code-req" rel="noopener" data-i18n="common.source"
+            >Source code</a
+          >
+        </p>
+        <p>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          · <span id="year"></span>
+        </p>
+      </div>
+    </footer>
+
+    <p
+      id="setup-notice"
+      class="notice notice-warning setup-banner"
+      hidden
+      data-i18n="setup.notConfigured"
+    >
+      This site is not connected to a Firebase project yet.
+    </p>
+
+    <script type="module" src="./js/pages/landing.js"></script>
+  </body>
+</html>

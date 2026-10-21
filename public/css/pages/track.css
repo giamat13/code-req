@@ -1,0 +1,77 @@
+/* Tracking page: a single column on phones, status and thread on the left, the developer and contact on the right. */
+
+.main-track {
+  padding-block-end: var(--space-12);
+}
+
+.track-header {
+  margin-block: var(--space-8) var(--space-6);
+}
+
+.track-header .eyebrow {
+  margin-block-end: var(--space-1);
+}
+
+.track-title {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.track-app {
+  margin: var(--space-1) 0 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-lg);
+}
+
+.track-meta {
+  margin: var(--space-2) 0 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.track-grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .track-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(260px, 1fr);
+    align-items: start;
+  }
+
+  .track-secondary {
+    position: sticky;
+    top: 84px;
+  }
+}
+
+.track-status {
+  margin-block-end: var(--space-4);
+}
+
+.track-primary,
+.track-secondary {
+  min-width: 0;
+}
+
+.track-secondary .card-actions {
+  margin-block-start: var(--space-2);
+}
+
+.thread-card .composer {
+  margin-block-start: var(--space-4);
+}
+
+.thread-card .section-title {
+  margin-block-end: var(--space-4);
+}
+
+.thread-card .thread-list {
+  padding-inline-end: var(--space-1);
+}
+
+.track-quote-empty {
+  color: var(--text-muted);
+}

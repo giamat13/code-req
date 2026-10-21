@@ -2,7 +2,7 @@
 
 - **Using the site or self-hosting it:** read the [README](README.md) and
   [self-hosting guide](docs/self-hosting.md) first. Then open a
-  [question issue](https://github.com/giamat13/apprequest/issues/new/choose).
+  [question issue](https://github.com/giamat13/code-req/issues/new/choose).
 - **Bugs:** open a bug report with the template. Include the browser, the
   locale, and the steps to reproduce.
 - **Security problems:** do not open an issue. Follow [SECURITY.md](SECURITY.md).

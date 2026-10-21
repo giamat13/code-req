@@ -51,7 +51,7 @@ service cloud.firestore {
     function isUsername(v) {
       return v is string
         && v.matches('^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$')
-        && !(v in ['about', 'admin', 'api', 'apprequest', 'assets', 'dashboard', 'developer', 'help',
+        && !(v in ['about', 'admin', 'api', 'assets', 'code-req', 'dashboard', 'developer', 'help',
                    'login', 'logout', 'moderation', 'new', 'null', 'official', 'privacy', 'root',
                    'settings', 'static', 'support', 'track', 'undefined']);
     }
@@ -230,6 +230,7 @@ service cloud.firestore {
 
       // Requester: edit the request while it is new or in progress.
       allow update: if resource.data.status in ['new', 'in_progress']
+        && !(signedIn() && request.auth.uid == resource.data.developerUid)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'requesterName', 'title', 'appName', 'appDescription', 'platforms', 'svgIcon',
           'notes', 'template', 'budgetRange', 'deadline', 'updatedAt'])

@@ -7,7 +7,7 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com http://127.0.0.1:9099 http://127.0.0.1:8080 ws://127.0.0.1:8080 http://localhost:9099 http://localhost:8080 ws://localhost:8080; frame-src https://*.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
     />
-    <title data-i18n="dashboard.pageTitle">Developer dashboard · AppRequest</title>
+    <title data-i18n="dashboard.pageTitle">Developer dashboard · code-req</title>
     <meta name="description" data-i18n-attr="content:dashboard.metaDescription" />
     <meta name="robots" content="noindex" />
     <meta name="theme-color" content="#6366f1" />
@@ -23,8 +23,15 @@
 
     <header class="site-header">
       <div class="container site-header-inner">
-        <a class="brand" href="index.html" data-i18n="common.appName">AppRequest</a>
-        <button id="nav-toggle" class="icon-button nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-i18n-attr="aria-label:nav.menu">
+        <a class="brand" href="index.html" data-i18n="common.appName">code-req</a>
+        <button
+          id="nav-toggle"
+          class="icon-button nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          data-i18n-attr="aria-label:nav.menu"
+        >
           <span aria-hidden="true">☰</span>
         </button>
         <nav id="site-nav" class="site-nav" aria-label="Main" data-open="false">
@@ -33,7 +40,11 @@
           <a href="privacy.html" data-nav data-i18n="nav.privacy">Privacy</a>
         </nav>
         <div class="site-controls">
-          <select id="language-select" class="select-compact" data-i18n-attr="aria-label:nav.language"></select>
+          <select
+            id="language-select"
+            class="select-compact"
+            data-i18n-attr="aria-label:nav.language"
+          ></select>
           <button id="theme-toggle" class="icon-button" type="button"></button>
         </div>
       </div>
@@ -49,7 +60,12 @@
         <p class="auth-body" data-i18n="dashboard.signInBody">
           Sign in to set up your developer profile and see the requests people send you.
         </p>
-        <button id="sign-in-button" class="btn btn-primary btn-block" type="button" data-i18n="dashboard.signInGoogle">
+        <button
+          id="sign-in-button"
+          class="btn btn-primary btn-block"
+          type="button"
+          data-i18n="dashboard.signInGoogle"
+        >
           Continue with Google
         </button>
         <div class="auth-divider"><span data-i18n="dashboard.or">or</span></div>
@@ -59,15 +75,45 @@
             <input id="auth-email" name="email" type="email" autocomplete="email" required />
           </div>
           <div class="field">
-            <label class="field-label" for="auth-password" data-i18n="auth.password">Password</label>
-            <input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="6" required />
+            <label class="field-label" for="auth-password" data-i18n="auth.password"
+              >Password</label
+            >
+            <input
+              id="auth-password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              minlength="6"
+              required
+            />
             <p class="field-help" data-i18n="auth.passwordHelp">At least 6 characters.</p>
           </div>
           <div class="form-actions">
-            <button id="email-sign-in" class="btn btn-primary" type="submit" data-i18n="auth.signIn">Sign in</button>
-            <button id="email-sign-up" class="btn btn-secondary" type="button" data-i18n="auth.createAccount">Create account</button>
+            <button
+              id="email-sign-in"
+              class="btn btn-primary"
+              type="submit"
+              data-i18n="auth.signIn"
+            >
+              Sign in
+            </button>
+            <button
+              id="email-sign-up"
+              class="btn btn-secondary"
+              type="button"
+              data-i18n="auth.createAccount"
+            >
+              Create account
+            </button>
           </div>
-          <button id="password-reset" class="btn btn-ghost btn-sm" type="button" data-i18n="auth.forgotPassword">Forgot password?</button>
+          <button
+            id="password-reset"
+            class="btn btn-ghost btn-sm"
+            type="button"
+            data-i18n="auth.forgotPassword"
+          >
+            Forgot password?
+          </button>
         </form>
         <p id="auth-status" class="form-status" role="status" aria-live="polite" hidden></p>
       </section>
@@ -80,18 +126,27 @@
             <p class="eyebrow" data-i18n="dashboard.signedInAs">Signed in as</p>
             <h1 id="account-name" class="app-title"></h1>
           </div>
-          <button id="sign-out-button" class="btn btn-secondary btn-sm" type="button" data-i18n="dashboard.signOut">Sign out</button>
+          <button
+            id="sign-out-button"
+            class="btn btn-secondary btn-sm"
+            type="button"
+            data-i18n="dashboard.signOut"
+          >
+            Sign out
+          </button>
         </div>
 
         <div id="developer-link" class="link-card"></div>
 
         <div class="app-toolbar">
-          <label class="field-label" for="status-filter" data-i18n="dashboard.filterStatus">Show</label>
+          <label class="field-label" for="status-filter" data-i18n="dashboard.filterStatus"
+            >Show</label
+          >
           <select id="status-filter" class="select-compact"></select>
           <p id="requests-count" class="muted" role="status"></p>
         </div>
 
-        <ul id="request-list" class="request-list" aria-live="polite"></ul>
+        <div id="request-list" class="request-list" aria-live="polite"></div>
       </section>
     </main>
 
@@ -101,7 +156,12 @@
           <span id="drawer-status-badge"></span>
           <h2 id="drawer-title" class="drawer-title"></h2>
         </div>
-        <button id="drawer-close" class="icon-button" type="button" data-i18n-attr="aria-label:common.close">
+        <button
+          id="drawer-close"
+          class="icon-button"
+          type="button"
+          data-i18n-attr="aria-label:common.close"
+        >
           <span aria-hidden="true">×</span>
         </button>
       </header>
@@ -112,7 +172,9 @@
       <div class="container footer-inner">
         <p>
           <span data-i18n="common.license">MIT licensed.</span>
-          <a href="https://github.com/giamat13/code-req" rel="noopener" data-i18n="common.source">Source code</a>
+          <a href="https://github.com/giamat13/code-req" rel="noopener" data-i18n="common.source"
+            >Source code</a
+          >
         </p>
         <p>
           <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>

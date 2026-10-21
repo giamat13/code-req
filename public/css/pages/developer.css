@@ -1,0 +1,73 @@
+/* Developer page: profile header and the request form. */
+
+.main-developer {
+  padding-block-end: var(--space-8);
+  max-width: 880px;
+}
+
+.developer-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-1);
+  margin-block-end: var(--space-8);
+}
+
+.request-form {
+  display: block;
+}
+
+.request-fields {
+  display: grid;
+  gap: 0;
+}
+
+.contact-fields {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-6);
+  margin: var(--space-6) 0;
+  min-width: 0;
+}
+
+.contact-fields legend {
+  padding-inline: var(--space-2);
+}
+
+.contact-fields .radio-group {
+  margin-block-end: var(--space-4);
+}
+
+.form-title {
+  margin-block-start: 0;
+}
+
+.request-form .form-actions {
+  justify-content: flex-end;
+}
+
+.request-form .field-check {
+  margin-block: var(--space-4);
+}
+
+.request-form .field-check .check {
+  align-items: flex-start;
+}
+
+.request-form .field-check .check span {
+  max-width: 60ch;
+}
+
+#developer-main:empty {
+  display: none;
+}
+
+.tracking-input {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: var(--font-size-sm);
+}
+
+.success-panel .tracking-input {
+  background: var(--surface);
+}

@@ -69,7 +69,7 @@ export function saveLocale(code) {
   if (SUPPORTED_LOCALES.includes(code)) storage.set(STORAGE_KEY, code);
 }
 
-// Fills elements marked with data-i18n (text) and data-i18n-attr="attribute:key;attribute:key" (attributes).
+// Fills elements marked with the data-i18n attribute (text), and elements that list attribute-to-key pairs (attributes).
 export function applyTranslations(root = document) {
   for (const node of root.querySelectorAll("[data-i18n]")) {
     node.textContent = t(node.dataset.i18n);

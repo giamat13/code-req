@@ -288,7 +288,7 @@ function downloadTracking(link, requestId) {
     "",
   ].join("\n");
   const url = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
-  const anchor = h("a", { href: url, download: `apprequest-${requestId}.txt` });
+  const anchor = h("a", { href: url, download: `code-req-${requestId}.txt` });
   document.body.append(anchor);
   anchor.click();
   anchor.remove();

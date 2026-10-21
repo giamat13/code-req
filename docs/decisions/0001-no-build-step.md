@@ -5,7 +5,7 @@
 
 ## Context
 
-AppRequest should be easy to read, fork, and self-host. Static hosts such as GitHub Pages and Firebase Hosting serve files as they are. Contributors should not need a bundler to change a line of UI.
+code-req should be easy to read, fork, and self-host. Static hosts such as GitHub Pages and Firebase Hosting serve files as they are. Contributors should not need a bundler to change a line of UI.
 
 ## Decision
 

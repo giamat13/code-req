@@ -5,7 +5,7 @@
 
 ## Context
 
-Anyone should be able to self-host AppRequest without adding a billing account. Cloud Functions and new Cloud Storage buckets require the Blaze (pay-as-you-go) plan.
+Anyone should be able to self-host code-req without adding a billing account. Cloud Functions and new Cloud Storage buckets require the Blaze (pay-as-you-go) plan.
 
 ## Decision
 

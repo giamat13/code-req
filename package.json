@@ -1,5 +1,5 @@
 {
-  "name": "apprequest",
+  "name": "code-req",
   "version": "0.1.0",
   "private": false,
   "description": "Ask a developer to build your app. Free, open source, and self-hostable.",
@@ -11,11 +11,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/giamat13/apprequest.git"
+    "url": "git+https://github.com/giamat13/code-req.git"
   },
-  "homepage": "https://giamat13.github.io/apprequest/",
+  "homepage": "https://giamat13.github.io/code-req/",
   "bugs": {
-    "url": "https://github.com/giamat13/apprequest/issues"
+    "url": "https://github.com/giamat13/code-req/issues"
   },
   "scripts": {
     "config": "node scripts/write-config.mjs",

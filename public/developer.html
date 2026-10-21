@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://www.gstatic.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self'; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://apis.google.com http://127.0.0.1:9099 http://127.0.0.1:8080 ws://127.0.0.1:8080 http://localhost:9099 http://localhost:8080 ws://localhost:8080; frame-src https://*.firebaseapp.com https://accounts.google.com https://apis.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <title data-i18n="developer.pageTitleDefault">Request an app · code-req</title>
+    <meta name="description" data-i18n-attr="content:developer.metaDescription" />
+    <meta name="theme-color" content="#6366f1" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content="__SITE_URL__developer.html" />
+    <link rel="canonical" href="__SITE_URL__developer.html" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="stylesheet" href="./css/tokens.css" />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/components.css" />
+    <link rel="stylesheet" href="./css/pages/developer.css" />
+  </head>
+  <body class="page-developer">
+    <a class="skip-link" href="#main" data-i18n="common.skipToContent">Skip to content</a>
+
+    <header class="site-header">
+      <div class="container site-header-inner">
+        <a class="brand" href="index.html" data-i18n="common.appName">code-req</a>
+        <button
+          id="nav-toggle"
+          class="icon-button nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="site-nav"
+          data-i18n-attr="aria-label:nav.menu"
+        >
+          <span aria-hidden="true">☰</span>
+        </button>
+        <nav id="site-nav" class="site-nav" aria-label="Main" data-open="false">
+          <a href="index.html" data-nav data-i18n="nav.directory">Developers</a>
+          <a href="dashboard.html" data-nav data-i18n="nav.forDevelopers">For developers</a>
+          <a href="privacy.html" data-nav data-i18n="nav.privacy">Privacy</a>
+        </nav>
+        <div class="site-controls">
+          <select
+            id="language-select"
+            class="select-compact"
+            data-i18n-attr="aria-label:nav.language"
+          ></select>
+          <button id="theme-toggle" class="icon-button" type="button"></button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="container main-developer" tabindex="-1">
+      <div id="developer-header"></div>
+      <div id="developer-main">
+        <section id="developer-form" class="developer-form" aria-live="polite">
+          <p class="muted" data-i18n="common.loading">Loading…</p>
+        </section>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p>
+          <span data-i18n="common.license">MIT licensed.</span>
+          <a href="https://github.com/giamat13/code-req" rel="noopener" data-i18n="common.source"
+            >Source code</a
+          >
+        </p>
+        <p>
+          <a href="privacy.html" data-i18n="nav.privacy">Privacy</a>
+          · <span id="year"></span>
+        </p>
+      </div>
+    </footer>
+
+    <p
+      id="setup-notice"
+      class="notice notice-warning setup-banner"
+      hidden
+      data-i18n="setup.notConfigured"
+    >
+      This site is not connected to a Firebase project yet.
+    </p>
+
+    <script type="module" src="./js/pages/developer.js"></script>
+  </body>
+</html>

@@ -18,6 +18,6 @@ Before the first deployment, the owner must do two things:
 
 ## Consequences
 
-- The site works under the `/apprequest/` subpath because every link is relative (ADR 0007).
+- The site works under the `/code-req/` subpath because every link is relative (ADR 0007).
 - GitHub Pages cannot set headers, so the policy is enforced by the meta tag only, and framing protection is missing there (ADR 0009).
 - Firestore security is unaffected, because all access control runs in Firestore rules.

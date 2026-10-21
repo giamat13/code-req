@@ -1,0 +1,50 @@
+/* Developer dashboard: sign-in gate, onboarding, the request list, and the drawer. */
+
+.main-dashboard {
+  padding-block-end: var(--space-12);
+  min-height: 60vh;
+}
+
+.main-dashboard > .setup-banner {
+  position: static;
+  max-width: none;
+  box-shadow: none;
+  margin-block: var(--space-6) 0;
+}
+
+#app {
+  max-width: 820px;
+  margin-inline: auto;
+}
+
+.onboarding .section-title {
+  font-size: var(--font-size-xl);
+}
+
+.onboarding-form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-1);
+}
+
+.onboarding-form .section-title {
+  margin-block-start: 0;
+}
+
+.app-toolbar .field-label {
+  margin: 0;
+}
+
+.app-toolbar .select-compact {
+  min-width: 180px;
+}
+
+#requests-count {
+  font-size: var(--font-size-sm);
+}
+
+.request-list .empty-state {
+  margin-block-start: var(--space-4);
+}

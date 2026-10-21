@@ -1,0 +1,46 @@
+/* Privacy and not-found pages: a comfortable reading column. */
+
+.main-legal {
+  padding-block: var(--space-12);
+}
+
+.legal {
+  max-width: 68ch;
+  margin-inline: auto;
+}
+
+.legal h1 {
+  font-size: var(--font-size-3xl);
+  margin-block-end: var(--space-4);
+}
+
+.legal h2 {
+  font-size: var(--font-size-lg);
+  margin-block: var(--space-8) var(--space-2);
+}
+
+.legal p {
+  color: var(--text);
+}
+
+.legal-lead {
+  font-size: var(--font-size-lg);
+  color: var(--text-muted);
+}
+
+.not-found {
+  text-align: center;
+  padding-block: var(--space-12);
+}
+
+.not-found .eyebrow {
+  font-size: var(--font-size-xl);
+}
+
+.not-found h1 {
+  font-size: var(--font-size-2xl);
+}
+
+.not-found p {
+  color: var(--text-muted);
+}

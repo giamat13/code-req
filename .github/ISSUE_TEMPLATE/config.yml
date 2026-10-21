@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: Security vulnerability
-    url: https://github.com/giamat13/apprequest/security/advisories/new
+    url: https://github.com/giamat13/code-req/security/advisories/new
     about: Report security problems privately. Do not open a public issue.
   - name: Questions and ideas
-    url: https://github.com/giamat13/apprequest/discussions
-    about: Ask how to use or self-host AppRequest.
+    url: https://github.com/giamat13/code-req/discussions
+    about: Ask how to use or self-host code-req.
