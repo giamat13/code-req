@@ -132,6 +132,7 @@
   "errors.network": "Could not reach the server. Check your connection and try again.",
   "errors.networkBody": "The connection failed. Try again in a moment.",
   "errors.retry": "Try again",
+  "errors.detail": "Technical details: {detail}",
   "request.pageTitle": "Request · code-req",
   "request.back": "Back to my requests",
   "request.gateTitle": "Open this request",

@@ -112,7 +112,11 @@ function profileHeader(developer) {
 }
 
 // onRetry adds a "Try again" button for failures that may clear up on their own, such as a dropped connection.
-function setStateMessage(title, body, { onRetry = null } = {}) {
+// detail is the underlying error text, shown under the message so a failure can be reported exactly.
+function setStateMessage(title, body, { onRetry = null, detail = null } = {}) {
+  const message = detail
+    ? h("span", {}, body, h("br"), h("small", { class: "muted" }, t("errors.detail", { detail })))
+    : body;
   const back = linkButton({
     href: "index.html",
     label: t("developer.backToDirectory"),
@@ -130,7 +134,9 @@ function setStateMessage(title, body, { onRetry = null } = {}) {
         back,
       )
     : back;
-  $("#developer-main").replaceChildren(emptyState({ iconName: "alert", title, body, action }));
+  $("#developer-main").replaceChildren(
+    emptyState({ iconName: "alert", title, body: message, action }),
+  );
 }
 
 function errorMessageFor(error) {
@@ -494,7 +500,10 @@ async function load() {
   } catch (error) {
     // The message hides the cause from visitors, so the console keeps it for debugging.
     console.error("Developer lookup failed:", error?.code ?? "", error?.message ?? error);
-    setStateMessage(t("errors.network"), t("errors.networkBody"), { onRetry: retry });
+    setStateMessage(t("errors.network"), t("errors.networkBody"), {
+      onRetry: retry,
+      detail: error?.code ? `${error.code}: ${error.message}` : String(error?.message ?? error),
+    });
   }
 }
 

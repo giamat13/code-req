@@ -132,6 +132,7 @@
   "errors.network": "לא ניתן להתחבר לשרת. בדוק את החיבור ונסה שוב.",
   "errors.networkBody": "החיבור נכשל. נסה שוב בעוד רגע.",
   "errors.retry": "נסה שוב",
+  "errors.detail": "פרטים טכניים: {detail}",
   "request.pageTitle": "בקשה · code-req",
   "request.back": "חזרה לבקשות שלי",
   "request.gateTitle": "פתיחת הבקשה",
