@@ -23,7 +23,7 @@ Where an ADR differs from `PROMPT.md`, the ADR wins:
 
 ## Commands
 
-Use Node 22 (`.nvmrc`); `package.json` requires 22.22.2 or later. Java 11 or later runs the emulators, and CI uses Java 21. Dependencies are pinned exactly, with no `^` or `~`.
+Use Node 22 (`.nvmrc`); `package.json` requires 22.22.2 or later. Java 11 or later runs the emulators, but `firebase-tools` now refuses anything older than Java 21, so `npm run test:rules` needs Java 21 on `PATH`. CI uses Java 21. On this machine, Temurin 21 is installed at `C:\Program Files\Eclipse Adoptium\jdk-21.0.12.101-hotspot`. Dependencies are pinned exactly, with no `^` or `~`.
 
 | Command                | Last checked                                                                                                                       |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
@@ -62,7 +62,7 @@ Other scripts:
 
 **Vocabulary exists in several places on purpose.** Platforms, statuses, templates, budgets, and length limits live in `domain/constants.js` and must match `firestore.rules`. The reserved username list lives in `domain/usernames.js` and in `firestore.rules`, and both must change together (ADR 0004). ADR 0004 says rules tests check this; none exist yet.
 
-**Firestore rules are the security boundary.** `firestore.rules` denies by default and never trusts the client. Write rules check the exact key set (`keys().hasOnly`), the key count (`isNewRequest` expects 17 keys), enum values, and `request.time` for timestamps. A new field needs changes to the rules, to the data model, and to a rules test. Request IDs are bearer tokens (ADR 0003): anyone with the ID can read, message, and cancel a `new` request. Only the owning developer can list requests, so do not add a query that lists requests across users.
+**Firestore rules are the security boundary.** `firestore.rules` denies by default and never trusts the client. Write rules check the exact key set (`keys().hasOnly`), the key count (`isNewRequest` expects 20 keys), enum values, and `request.time` for timestamps. A new field needs changes to the rules, to the data model, and to a rules test. Request IDs are bearer tokens (ADR 0003): anyone with the ID can read, message, and cancel a `new` request. Only the owning developer can list requests, so do not add a query that lists requests across users.
 
 **User SVG is sanitized in the browser.** The client sanitizes with DOMPurify, stores the result as text, and renders it only as `<img src="data:image/svg+xml...">`. The rules check only that the string looks like an `<svg>` element. They cannot sanitize it (ADR 0005).
 
@@ -80,5 +80,11 @@ Other scripts:
 - `ci.yml` runs on pull requests and on pushes to `main` and `build/**`. It runs lint, format, i18n, and unit tests. Then it runs the rules and E2E tests against the emulators on Java 21. A gitleaks job runs alongside.
 - `pages.yml` runs on pushes to `main`. It generates the config and deploys `public/` to GitHub Pages.
 - `deploy.yml` runs only by hand. It deploys rules, indexes, and Hosting to Firebase with a service-account secret.
+
+**Known blockers, checked 2026-10-21. Report them once and do not dig into them again.**
+
+- `deploy.yml` fails with `Failed to authenticate`. The `firebase` environment has no `FIREBASE_SERVICE_ACCOUNT` secret and no `FIREBASE_PROJECT_ID` variable. This machine has no Firebase login either. The owner decides how to supply credentials.
+- `test:e2e:ci` fails in CI because `playwright.config.*` does not exist yet. It is not caused by a change in the code.
+- Rules tests pass locally and in CI (85 of 85 on 2026-10-21). If a deploy is blocked, say so and move on. Do not keep retrying the same failure.
 
 Workflow rules, such as Conventional Commits, branch names, the PR checklist, and when an ADR is required, are in `CONTRIBUTING.md`.
