@@ -4,6 +4,7 @@ import { describeAuthError } from "../core/errors.js";
 import { startPage, setStatus } from "../core/page.js";
 import { t } from "../core/i18n.js";
 import { toast } from "../core/toast.js";
+import { withTimeout } from "../core/timeout.js";
 import { getDeveloper } from "../services/developers.js";
 import {
   finishRedirectSignIn,
@@ -95,7 +96,7 @@ async function onUser(user) {
     renderSignedOut(user ? t("dashboard.anonymousNotAllowed") : null);
     return;
   }
-  const developer = await getDeveloper(user.uid);
+  const developer = await withTimeout(getDeveloper(user.uid));
   if (!developer) {
     showOnly("onboarding");
     renderOnboarding(user);

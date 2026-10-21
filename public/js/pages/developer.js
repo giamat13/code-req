@@ -21,6 +21,7 @@ import {
 import { COOLDOWN_SECONDS, DRAFT_DEBOUNCE_MS } from "../domain/constants.js";
 import { extractUsername, usernameError } from "../domain/usernames.js";
 import { contactState, validateContact, validateRequestForm } from "../domain/validation.js";
+import { withTimeout } from "../core/timeout.js";
 import { findDeveloper } from "../services/developers.js";
 import { createRequest } from "../services/requests.js";
 import { ensureRequesterSession } from "../services/auth.js";
@@ -477,7 +478,7 @@ async function load() {
     return;
   }
   try {
-    const developer = await findDeveloper(username);
+    const developer = await withTimeout(findDeveloper(username));
     if (!developer) {
       setStateMessage(t("developer.notFound"), t("developer.notFoundBody"));
       return;
