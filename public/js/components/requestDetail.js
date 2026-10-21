@@ -1,43 +1,33 @@
-import { $, h, setBusy } from "../../core/dom.js";
-import { confirmDialog } from "../../core/dialog.js";
-import { describeError } from "../../core/errors.js";
-import { t } from "../../core/i18n.js";
-import { setStatus } from "../../core/page.js";
-import { toast } from "../../core/toast.js";
-import { renderThread } from "../../components/thread.js";
-import { copyText, definitionList, platformChips, statusBadge } from "../../components/ui.js";
-import { BOARD_STATUSES, CURRENCIES } from "../../domain/constants.js";
-import { buildBrief } from "../../domain/brief.js";
-import { svgDataUri } from "../../domain/svg.js";
+import { h, setBusy } from "../core/dom.js";
+import { confirmDialog } from "../core/dialog.js";
+import { describeError } from "../core/errors.js";
+import { t } from "../core/i18n.js";
+import { setStatus } from "../core/page.js";
+import { toast } from "../core/toast.js";
+import { renderThread } from "./thread.js";
+import { copyText, definitionList, platformChips, statusBadge } from "./ui.js";
+import { BOARD_STATUSES, CURRENCIES } from "../domain/constants.js";
+import { buildBrief } from "../domain/brief.js";
+import { svgDataUri } from "../domain/svg.js";
 import {
   normalizeTags,
   validateInternalNotes,
   validateMessage,
   validateQuote,
-} from "../../domain/validation.js";
-import { sendMessage, watchMessages } from "../../services/messages.js";
+} from "../domain/validation.js";
+import { sendMessage, watchMessages } from "../services/messages.js";
 import {
   deleteRequest,
   getPrivateContact,
   saveNotes,
   saveQuote,
   setRequestStatus,
-} from "../../services/requests.js";
+} from "../services/requests.js";
 
 const CHANNEL_KEYS = {
   email: "contact.channel.email",
   phone: "contact.channel.phone",
   thread: "contact.channel.thread",
-};
-
-const drawer = {
-  requestId: null,
-  request: null,
-  stopMessages: null,
-  returnFocus: null,
-  contact: null,
-  notes: null,
-  onNotesSaved: null,
 };
 
 function labeled(id, labelKey, control) {
@@ -67,13 +57,13 @@ function statusControl(request) {
   );
 }
 
-async function changeStatus(event) {
+async function changeStatus(event, requestId) {
   const select = event.currentTarget;
   const next = select.value;
   const previous = select.dataset.current;
   setBusy(select, true);
   try {
-    await setRequestStatus(drawer.requestId, next);
+    await setRequestStatus(requestId, next);
     select.dataset.current = next;
     toast(t("drawer.statusSaved"));
   } catch (error) {
@@ -105,19 +95,20 @@ function contactDetails(contact) {
   ]);
 }
 
-async function loadContact(requestId, holder) {
+async function loadContact(view, holder) {
   try {
-    const contact = await getPrivateContact(requestId);
-    if (drawer.requestId !== requestId) return;
-    drawer.contact = contact;
+    const contact = await getPrivateContact(view.requestId);
+    if (!view.active) return;
+    view.contact = contact;
     holder.replaceChildren(contactDetails(contact));
   } catch (error) {
+    if (!view.active) return;
     holder.replaceChildren(h("p", { class: "field-error" }, describeError(error)));
   }
 }
 
 // The quote is shown to the requester on the tracking page, so the amount and timeline must be exact.
-function quoteSection(request) {
+function quoteSection(requestId, request) {
   const quote = request.quote ?? null;
   const status = h("p", {
     class: "form-status",
@@ -174,7 +165,7 @@ function quoteSection(request) {
     }
     setBusy(save, true);
     try {
-      await saveQuote(drawer.requestId, validation.values);
+      await saveQuote(requestId, validation.values);
       clear.hidden = false;
       setStatus(status, t("drawer.quoteSaved"));
     } catch (error) {
@@ -187,7 +178,7 @@ function quoteSection(request) {
   clear.addEventListener("click", async () => {
     setBusy(clear, true);
     try {
-      await saveQuote(drawer.requestId, null);
+      await saveQuote(requestId, null);
       amount.value = "";
       timeline.value = "";
       validUntil.value = "";
@@ -222,7 +213,8 @@ function quoteSection(request) {
 }
 
 // Private notes and tags. Only the developer reads them, and they never appear in the requester's view.
-function notesSection(notes) {
+function notesSection(view) {
+  const notes = view.notes;
   const status = h("p", {
     class: "form-status",
     role: "status",
@@ -254,9 +246,8 @@ function notesSection(notes) {
     const saved = { internalNotes: notesValidation.value, tags: tagValidation.value };
     setBusy(save, true);
     try {
-      await saveNotes(drawer.requestId, saved);
-      drawer.notes = saved;
-      drawer.onNotesSaved?.(saved);
+      await saveNotes(view.requestId, saved);
+      view.notes = saved;
       setStatus(status, t("drawer.notesSaved"));
     } catch (error) {
       setStatus(status, describeError(error), { error: true });
@@ -277,8 +268,7 @@ function notesSection(notes) {
   );
 }
 
-async function deleteCurrent() {
-  const id = drawer.requestId;
+async function deleteCurrent(view) {
   const confirmed = await confirmDialog({
     title: t("drawer.deleteTitle"),
     message: t("drawer.deleteBody"),
@@ -287,25 +277,25 @@ async function deleteCurrent() {
   });
   if (!confirmed) return;
   try {
-    await deleteRequest(id);
-    closeDrawer();
+    await deleteRequest(view.requestId);
     toast(t("drawer.deleted"));
+    view.onDeleted?.();
   } catch (error) {
     toast(describeError(error), { type: "error" });
   }
 }
 
-function actionsRow() {
+function actionsRow(view) {
   const copy = h(
     "button",
     {
       type: "button",
       class: "btn btn-secondary btn-sm",
       onclick: async () => {
-        const brief = buildBrief(drawer.request, {
-          preferredChannel: drawer.contact?.channel ?? null,
-          internalNotes: drawer.notes?.internalNotes ?? "",
-          tags: drawer.notes?.tags ?? [],
+        const brief = buildBrief(view.request, {
+          preferredChannel: view.contact?.channel ?? null,
+          internalNotes: view.notes.internalNotes ?? "",
+          tags: view.notes.tags ?? [],
         });
         const copied = await copyText(brief);
         toast(copied ? t("drawer.briefCopied") : t("common.copyFailed"), {
@@ -317,7 +307,7 @@ function actionsRow() {
   );
   const remove = h(
     "button",
-    { type: "button", class: "btn btn-danger btn-sm", onclick: deleteCurrent },
+    { type: "button", class: "btn btn-danger btn-sm", onclick: () => deleteCurrent(view) },
     t("drawer.delete"),
   );
   return h("div", { class: "drawer-actions" }, copy, remove);
@@ -345,8 +335,9 @@ function sendReply(event, requestId, textarea, status, button) {
     });
 }
 
-function buildBody(request, notes) {
-  const requestId = request.id;
+function buildBody(view) {
+  const request = view.request;
+  const requestId = view.requestId;
   const contactHolder = h(
     "div",
     { class: "drawer-contact" },
@@ -385,7 +376,7 @@ function buildBody(request, notes) {
       statusControl(request),
     ),
     h("p", { id: "drawer-status-help", class: "field-help" }, t("drawer.statusHelp")),
-    actionsRow(),
+    actionsRow(view),
     request.svgIcon
       ? h("img", {
           class: "svg-preview",
@@ -410,8 +401,8 @@ function buildBody(request, notes) {
       { label: t("form.notes"), value: request.notes },
     ]),
     platformChips(request.platforms),
-    quoteSection(request),
-    notesSection(notes),
+    quoteSection(requestId, request),
+    notesSection(view),
     h("h3", { class: "section-title" }, t("drawer.contact")),
     contactHolder,
     h("h3", { class: "section-title" }, t("drawer.thread")),
@@ -434,70 +425,50 @@ function buildBody(request, notes) {
   const select = body.querySelector("#drawer-status");
   if (select) {
     select.dataset.current = request.status;
-    select.addEventListener("change", changeStatus);
+    select.addEventListener("change", (event) => changeStatus(event, requestId));
   }
   return { body, contactHolder, threadList };
 }
 
-export function openDrawer(
+// Mounts one request's controls into container. The page keeps the heading and badge; this keeps the rest in step.
+export function mountRequestDetail(
+  container,
   request,
-  { notes = { internalNotes: "", tags: [] }, onNotesSaved = null } = {},
+  { notes = { internalNotes: "", tags: [] }, onDeleted = null } = {},
 ) {
-  const dialog = $("#request-drawer");
-  drawer.requestId = request.id;
-  drawer.request = request;
-  drawer.notes = notes;
-  drawer.onNotesSaved = onNotesSaved;
-  drawer.contact = null;
-  drawer.returnFocus = document.activeElement;
-  drawer.stopMessages?.();
-
-  $("#drawer-title").textContent = request.title;
-  const { body, contactHolder, threadList } = buildBody(request, notes);
-  $("#drawer-body").replaceChildren(body);
-  $("#drawer-status-badge").replaceChildren(statusBadge(request.status));
-
-  loadContact(request.id, contactHolder);
-  drawer.stopMessages = watchMessages(
+  const view = {
+    requestId: request.id,
+    request,
+    notes,
+    contact: null,
+    active: true,
+    onDeleted,
+  };
+  const { body, contactHolder, threadList } = buildBody(view);
+  container.replaceChildren(body);
+  loadContact(view, contactHolder);
+  const stopMessages = watchMessages(
     request.id,
     (messages) => renderThread(threadList, messages, "developer"),
     () => {
-      threadList.replaceChildren(h("li", { class: "thread-empty" }, t("errors.network")));
+      if (view.active)
+        threadList.replaceChildren(h("li", { class: "thread-empty" }, t("errors.network")));
     },
   );
 
-  if (!dialog.open) dialog.showModal();
-}
-
-// Keeps the header and the status in step with the live list while the drawer is open.
-export function refreshDrawer(request) {
-  if (drawer.requestId !== request.id) return;
-  drawer.request = request;
-  const select = $("#drawer-status");
-  if (select && document.activeElement !== select && select.dataset.current !== request.status) {
-    select.value = request.status;
-    select.dataset.current = request.status;
-  }
-  $("#drawer-status-badge").replaceChildren(statusBadge(request.status));
-}
-
-export function openRequestId() {
-  return drawer.requestId;
-}
-
-export function closeDrawer() {
-  $("#request-drawer").close();
-}
-
-export function wireDrawer() {
-  const dialog = $("#request-drawer");
-  $("#drawer-close").addEventListener("click", closeDrawer);
-  dialog.addEventListener("close", () => {
-    drawer.stopMessages?.();
-    drawer.stopMessages = null;
-    drawer.requestId = null;
-    drawer.request = null;
-    drawer.returnFocus?.focus?.();
-    $("#drawer-body").replaceChildren();
-  });
+  return {
+    update(next) {
+      view.request = next;
+      const select = container.querySelector("#drawer-status");
+      if (select && document.activeElement !== select && select.dataset.current !== next.status) {
+        select.value = next.status;
+        select.dataset.current = next.status;
+      }
+    },
+    stop() {
+      view.active = false;
+      stopMessages();
+      container.replaceChildren();
+    },
+  };
 }

@@ -4,8 +4,8 @@ import { describeError } from "../../core/errors.js";
 import { formatRelative } from "../../core/format.js";
 import { t } from "../../core/i18n.js";
 import { setStatus } from "../../core/page.js";
-import { developerUrl, replaceQuery } from "../../core/router.js";
-import { storage } from "../../core/storage.js";
+import { developerUrl, pageUrl, replaceQuery } from "../../core/router.js";
+import { markSeen, seenAt } from "../../core/seen.js";
 import { toast } from "../../core/toast.js";
 import {
   definitionList,
@@ -35,9 +35,7 @@ import {
 } from "../../domain/filters.js";
 import { getPrivateNotes, setRequestStatus, watchOwnRequests } from "../../services/requests.js";
 import { toDate } from "../../domain/time.js";
-import { closeDrawer, openDrawer, openRequestId, refreshDrawer, wireDrawer } from "./drawer.js";
 
-const SEEN_KEY = "apprequest.seen.v1";
 const SEARCH_DEBOUNCE_MS = 200;
 // Requests this developer just moved. Their own writes change updatedAt, which would otherwise mark them unread.
 const ownWrites = new Set();
@@ -53,17 +51,8 @@ const state = {
   searchTimer: null,
 };
 
-// Per-device "last opened" times. A request is unread when something changed after the last time it was opened.
-const seenMap = () => storage.getJSON(SEEN_KEY, {});
-
-function markSeen(id) {
-  const map = seenMap();
-  map[id] = Date.now();
-  storage.setJSON(SEEN_KEY, map);
-}
-
 function isRequestUnread(request) {
-  return isUnread(request, seenMap()[request.id] ?? null);
+  return isUnread(request, seenAt(request.id));
 }
 
 function unreadCount() {
@@ -148,16 +137,10 @@ function renderFilters() {
   $("#view-list").setAttribute("aria-pressed", String(f.view === "list"));
 }
 
+// Each request has its own page. Opening it marks it seen here first, so the card is not unread when we come back.
 function openRequest(request) {
   markSeen(request.id);
-  openDrawer(request, {
-    notes: state.notes[request.id] ?? { internalNotes: "", tags: [] },
-    onNotesSaved: (notes) => {
-      state.notes[request.id] = notes;
-      renderAll();
-    },
-  });
-  renderAll();
+  window.location.assign(pageUrl("request.html", { r: request.id }));
 }
 
 // Moves a request to another status. The board updates at once and rolls back if the save fails.
@@ -399,16 +382,13 @@ async function loadNotes(requests) {
 
 function onRequests(requests) {
   const known = new Set(state.requests.map((request) => request.id));
-  // A request that is open, or that this developer just moved, is seen as its changes arrive.
-  const open = openRequestId();
   for (const request of requests) {
-    if (request.id === open || ownWrites.has(request.id)) markSeen(request.id);
+    if (ownWrites.has(request.id)) markSeen(request.id);
     // updatedAt stays null until the server confirms the write, so the confirmed snapshot is the one that counts.
     if (request.updatedAt) ownWrites.delete(request.id);
   }
   state.requests = requests;
   renderAll();
-  for (const request of requests) refreshDrawer(request);
   // The first snapshot is the existing list. Only later arrivals are new requests.
   if (state.announced) {
     for (const request of requests.filter((item) => !known.has(item.id))) {
@@ -448,7 +428,6 @@ function openHelp() {
 function wireShortcuts() {
   document.addEventListener("keydown", (event) => {
     if (event.defaultPrevented || event.ctrlKey || event.metaKey || event.altKey) return;
-    if ($("#request-drawer").open) return;
     if (["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return;
     if (event.key === "/") {
       event.preventDefault();
@@ -488,7 +467,6 @@ function wireOnce() {
   state.wired = true;
   wireFilters();
   wireShortcuts();
-  wireDrawer();
 }
 
 export function mountRequests(developer, user) {
@@ -510,5 +488,4 @@ export function unmountRequests() {
   state.requests = [];
   state.notes = {};
   state.announced = false;
-  closeDrawer();
 }

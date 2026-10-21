@@ -1,0 +1,44 @@
+/* One developer request: its heading, then the detail controls. The sections reuse the drawer's styles. */
+
+.main-request {
+  min-height: 60vh;
+  padding-block-end: var(--space-12);
+}
+
+.request-page {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.back-link {
+  display: inline-block;
+  margin-block: var(--space-6) var(--space-4);
+  font-size: var(--font-size-sm);
+}
+
+.request-header {
+  display: grid;
+  gap: var(--space-2);
+  margin-block-end: var(--space-6);
+  padding-block-end: var(--space-4);
+  border-block-end: 2px solid var(--text);
+}
+
+.request-title {
+  margin: 0;
+  font-size: var(--font-size-2xl);
+  overflow-wrap: anywhere;
+}
+
+#request-loading {
+  margin-block: var(--space-12);
+  text-align: center;
+}
+
+#request-gate,
+#request-missing,
+#request-error {
+  max-width: 480px;
+  margin-block: var(--space-12);
+  margin-inline: auto;
+}
