@@ -395,7 +395,10 @@ function buildBody(view) {
       },
       {
         label: t("form.budget"),
-        value: request.budgetRange ? t(`budget.${request.budgetRange}`) : null,
+        // Ranges such as "500–2,000" read backwards inside Hebrew text unless they are forced left to right.
+        value: request.budgetRange
+          ? h("span", { dir: "ltr" }, t(`budget.${request.budgetRange}`))
+          : null,
       },
       { label: t("form.deadline"), value: request.deadline },
       { label: t("form.notes"), value: request.notes },

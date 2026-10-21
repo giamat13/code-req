@@ -42,3 +42,12 @@
   margin-block: var(--space-12);
   margin-inline: auto;
 }
+
+/* Details and chips get room between them, so the chips never sit on the last detail line. */
+#request-detail .details-list {
+  margin-block: var(--space-4) var(--space-3);
+}
+
+#request-detail .chip-list {
+  margin-block-end: var(--space-6);
+}
