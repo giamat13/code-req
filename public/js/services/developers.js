@@ -58,9 +58,24 @@ async function findDeveloperWithRest(username) {
   }
 }
 
+// The dashboard's profile read. Profiles are public, so it goes over REST first, like the public lookup. That way
+// a stalled stream cannot stop the dashboard from opening.
 export async function getDeveloper(uid) {
+  try {
+    return await withTimeout(getDeveloperWithRest(uid), REST_LOOKUP_MS);
+  } catch {
+    return withTimeout(getDeveloperWithSdk(uid), SDK_LOOKUP_MS);
+  }
+}
+
+async function getDeveloperWithSdk(uid) {
   const snapshot = await getDoc(doc(db, "developers", uid));
   return snapshot.exists() ? { uid, ...snapshot.data() } : null;
+}
+
+async function getDeveloperWithRest(uid) {
+  const profile = await readDocument(`developers/${uid}`);
+  return profile ? { uid, ...profile } : null;
 }
 
 export async function isUsernameTaken(username) {
