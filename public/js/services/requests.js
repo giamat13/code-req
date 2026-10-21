@@ -78,6 +78,17 @@ export async function listMyRequests(requesterUid) {
   return snapshot.docs.map(withId);
 }
 
+// Live list of the requests sent from this browser's session, newest first.
+export function watchMyRequests(requesterUid, onChange, onError) {
+  const mine = query(
+    collection(db, "requests"),
+    where("requesterUid", "==", requesterUid),
+    orderBy("createdAt", "desc"),
+    limit(LIMITS.requestListMax),
+  );
+  return onSnapshot(mine, (snapshot) => onChange(snapshot.docs.map(withId)), onError);
+}
+
 export function watchRequest(id, onChange, onError) {
   return onSnapshot(
     doc(db, "requests", id),

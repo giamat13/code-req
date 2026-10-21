@@ -1,0 +1,18 @@
+{
+  "name": "code-req",
+  "short_name": "code-req",
+  "description": "Ask a developer to build your app. Free, open source, and self-hostable.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#6366f1",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

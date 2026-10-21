@@ -4,7 +4,7 @@ import { isConfigured } from "../core/config.js";
 import { icon } from "../core/icons.js";
 import { t } from "../core/i18n.js";
 import { startPage, setStatus } from "../core/page.js";
-import { developerUrl, getParam, trackUrl } from "../core/router.js";
+import { developerUrl, getParam, pageUrl, trackUrl } from "../core/router.js";
 import { storage } from "../core/storage.js";
 import { checkboxField } from "../components/forms.js";
 import { createContactFields } from "../components/contactFields.js";
@@ -256,6 +256,11 @@ function showSuccess(requestId) {
             icon("alert", { size: 16 }),
             t("form.saveWarning"),
           ),
+          linkButton({
+            href: pageUrl("requests.html"),
+            label: t("form.openMyRequests"),
+            className: "btn btn-secondary btn-sm",
+          }),
         )
       : null,
     h(

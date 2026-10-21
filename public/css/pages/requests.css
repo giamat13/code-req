@@ -1,0 +1,83 @@
+/* My requests page: the requests from this browser, grouped by status. */
+
+.main-requests {
+  max-width: 880px;
+  padding-block: var(--space-8) var(--space-12);
+}
+
+.requests-header h1 {
+  margin: 0;
+}
+
+.requests-header .section-lead {
+  margin-block: var(--space-2) var(--space-3);
+}
+
+.my-groups {
+  display: grid;
+  gap: var(--space-8);
+  margin-block-start: var(--space-6);
+}
+
+.my-group .section-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.group-count {
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-chip);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.my-request-list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.my-request-link {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  color: var(--text);
+  text-decoration: none;
+  transition: box-shadow var(--motion-base) var(--ease-out);
+}
+
+.my-request-link:hover {
+  box-shadow: var(--shadow-1);
+  color: var(--text);
+}
+
+.my-request-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.my-request-app {
+  font-weight: 650;
+  font-size: var(--font-size-md);
+}
+
+.my-request-title {
+  color: var(--text);
+}
+
+.my-request-meta {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
