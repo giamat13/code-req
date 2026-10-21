@@ -12,6 +12,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Project foundation: repository files, pinned tooling, ESLint and Prettier configuration,
   continuous integration, GitHub Pages and Firebase workflows, and architecture decision records.
 
+### Fixed
+
+- The request form on a developer's page no longer fails to restore a saved draft. The error
+  "state.fields.write is not a function" stopped the page from loading the form.
+
 ### Added
 
 - Developers can edit their own profile on their page: display name, bio, website, pricing note,

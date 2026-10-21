@@ -284,6 +284,14 @@ export function createRequestFields({ acceptedPlatforms, initial = {} }) {
         svgError: svg.error,
       };
     },
+    // Fills the form from saved values. Missing names are cleared, so write({}) resets the form.
+    write(values = {}) {
+      for (const name of FIELD_ORDER) {
+        if (name === "svgIcon") fields.svgIcon.write(values.svgIcon ?? null);
+        else if (name === "platforms") fields.platforms.write(values.platforms ?? []);
+        else fields[name].write(values[name] ?? "");
+      }
+    },
     setErrors(errors, svgError = null) {
       for (const name of FIELD_ORDER) {
         if (name === "svgIcon") fields.svgIcon.setError(svgError ?? errors.svgIcon ?? null);
