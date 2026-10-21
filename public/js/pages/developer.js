@@ -491,7 +491,9 @@ async function load() {
       return;
     }
     renderDeveloper(developer);
-  } catch {
+  } catch (error) {
+    // The message hides the cause from visitors, so the console keeps it for debugging.
+    console.error("Developer lookup failed:", error?.code ?? "", error?.message ?? error);
     setStateMessage(t("errors.network"), t("errors.networkBody"), { onRetry: retry });
   }
 }

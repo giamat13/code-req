@@ -13,17 +13,44 @@ import {
   where,
 } from "../firebase-sdk.js";
 import { LIMITS } from "../domain/constants.js";
+import { withTimeout } from "../core/timeout.js";
 import { db } from "./firebase.js";
+import { readDocument } from "./restDocs.js";
+
+// How long the SDK gets before the REST API answers the same lookup instead.
+const SDK_LOOKUP_MS = 6000;
 
 // Returns the developer's public profile for a username, or null. A suspended developer
 // returns { unavailable: true } because Firestore denies the read to anonymous visitors.
+// The SDK is the normal path. If its connection stalls or fails, the REST API answers the same lookup over plain HTTPS.
 export async function findDeveloper(username) {
+  try {
+    return await withTimeout(findDeveloperWithSdk(username), SDK_LOOKUP_MS);
+  } catch {
+    return findDeveloperWithRest(username);
+  }
+}
+
+async function findDeveloperWithSdk(username) {
   const claim = await getDoc(doc(db, "usernames", username));
   if (!claim.exists()) return null;
   const uid = claim.data().uid;
   try {
     const snapshot = await getDoc(doc(db, "developers", uid));
     return snapshot.exists() ? { uid, ...snapshot.data() } : null;
+  } catch (error) {
+    if (error.code === "permission-denied") return { uid, username, unavailable: true };
+    throw error;
+  }
+}
+
+async function findDeveloperWithRest(username) {
+  const claim = await readDocument(`usernames/${username}`);
+  if (!claim) return null;
+  const uid = claim.uid;
+  try {
+    const profile = await readDocument(`developers/${uid}`);
+    return profile ? { uid, ...profile } : null;
   } catch (error) {
     if (error.code === "permission-denied") return { uid, username, unavailable: true };
     throw error;
