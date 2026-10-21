@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         id: pages
       # Only Node's built-in modules run here, so no npm install is needed.
       - uses: actions/setup-node@v4
