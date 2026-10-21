@@ -79,6 +79,7 @@ function renderLink(developer) {
       { class: "link-row" },
       h("input", {
         class: "tracking-input",
+        dir: "ltr",
         readonly: true,
         value: link,
         "aria-label": t("dashboard.yourLink"),
@@ -141,6 +142,8 @@ function renderFilters() {
     f.sort,
   );
   $("#filter-q").value = f.q;
+  // The extra filters stay hidden until one of them is set, for example from a shared link.
+  if (f.template !== "all" || f.tag !== "all" || f.range !== "all") $("#filter-more").open = true;
   $("#view-board").setAttribute("aria-pressed", String(f.view === "board"));
   $("#view-list").setAttribute("aria-pressed", String(f.view === "list"));
 }

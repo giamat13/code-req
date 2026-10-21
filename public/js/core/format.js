@@ -9,15 +9,18 @@ export function formatDate(value, { time = false } = {}) {
   return new Intl.DateTimeFormat(currentLocale(), options).format(date);
 }
 
+// Intl.RelativeTimeFormat puts the number in parentheses for Hebrew special forms ("לפני שעתיים (2)"),
+// so the short relative labels come from our own translations.
 export function formatRelative(value, now = Date.now()) {
   const date = toDate(value);
   if (!date) return t("time.pending");
-  const seconds = Math.round((date.getTime() - now) / 1000);
-  const abs = Math.abs(seconds);
-  const formatter = new Intl.RelativeTimeFormat(currentLocale(), { numeric: "auto" });
-  if (abs < 60) return formatter.format(0, "second");
-  if (abs < 3600) return formatter.format(Math.round(seconds / 60), "minute");
-  if (abs < 86400) return formatter.format(Math.round(seconds / 3600), "hour");
-  if (abs < 30 * 86400) return formatter.format(Math.round(seconds / 86400), "day");
+  const seconds = Math.floor((now - date.getTime()) / 1000);
+  if (seconds < 60) return t("time.now");
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return t("time.minutesAgo", { count: minutes });
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return t("time.hoursAgo", { count: hours });
+  const days = Math.floor(hours / 24);
+  if (days < 30) return t("time.daysAgo", { count: days });
   return formatDate(date);
 }

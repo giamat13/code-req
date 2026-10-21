@@ -167,27 +167,37 @@
             <select id="filter-budget" class="select-compact"></select>
           </div>
           <div class="field">
-            <label class="field-label" for="filter-template" data-i18n="dashboard.filterTemplate"
-              >Template</label
-            >
-            <select id="filter-template" class="select-compact"></select>
-          </div>
-          <div class="field">
-            <label class="field-label" for="filter-tag" data-i18n="dashboard.filterTag">Tag</label>
-            <select id="filter-tag" class="select-compact"></select>
-          </div>
-          <div class="field">
-            <label class="field-label" for="filter-range" data-i18n="dashboard.filterRange"
-              >Received</label
-            >
-            <select id="filter-range" class="select-compact"></select>
-          </div>
-          <div class="field">
             <label class="field-label" for="filter-sort" data-i18n="dashboard.filterSort"
               >Sort</label
             >
             <select id="filter-sort" class="select-compact"></select>
           </div>
+          <details id="filter-more" class="filter-more">
+            <summary data-i18n="dashboard.moreFilters">More filters</summary>
+            <div class="filter-more-fields">
+              <div class="field">
+                <label
+                  class="field-label"
+                  for="filter-template"
+                  data-i18n="dashboard.filterTemplate"
+                  >Template</label
+                >
+                <select id="filter-template" class="select-compact"></select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="filter-tag" data-i18n="dashboard.filterTag"
+                  >Tag</label
+                >
+                <select id="filter-tag" class="select-compact"></select>
+              </div>
+              <div class="field">
+                <label class="field-label" for="filter-range" data-i18n="dashboard.filterRange"
+                  >Received</label
+                >
+                <select id="filter-range" class="select-compact"></select>
+              </div>
+            </div>
+          </details>
           <div class="view-toggle" role="group" data-i18n-attr="aria-label:dashboard.view">
             <button
               id="view-board"

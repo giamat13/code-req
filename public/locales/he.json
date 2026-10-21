@@ -441,5 +441,13 @@
   "myRequests.emptyTitle": "עדיין אין בקשות מהדפדפן הזה",
   "myRequests.emptyBody": "עיין במפתחים, שלח בקשה, והיא תופיע כאן.",
   "myRequests.browse": "עיון במפתחים",
+  "time.now": "עכשיו",
+  "time.minutesAgo.one": "לפני דקה",
+  "time.minutesAgo.other": "לפני {count} דקות",
+  "time.hoursAgo.one": "לפני שעה",
+  "time.hoursAgo.other": "לפני {count} שעות",
+  "time.daysAgo.one": "לפני יום",
+  "time.daysAgo.other": "לפני {count} ימים",
+  "dashboard.moreFilters": "סינון נוסף",
   "time.pending": "עדיין לא נשמר"
 }

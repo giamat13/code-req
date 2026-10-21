@@ -441,5 +441,13 @@
   "myRequests.emptyTitle": "No requests from this browser yet",
   "myRequests.emptyBody": "Browse the developers, send a request, and it will appear here.",
   "myRequests.browse": "Browse developers",
+  "time.now": "just now",
+  "time.minutesAgo.one": "a minute ago",
+  "time.minutesAgo.other": "{count} minutes ago",
+  "time.hoursAgo.one": "an hour ago",
+  "time.hoursAgo.other": "{count} hours ago",
+  "time.daysAgo.one": "a day ago",
+  "time.daysAgo.other": "{count} days ago",
+  "dashboard.moreFilters": "More filters",
   "time.pending": "Not yet saved"
 }

@@ -13,7 +13,7 @@
 }
 
 #app {
-  max-width: 820px;
+  max-width: 1040px;
   margin-inline: auto;
 }
 
@@ -35,19 +35,51 @@
 
 .filter-bar {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-3);
   align-items: end;
   margin-block: var(--space-4);
 }
 
+@media (max-width: 640px) {
+  .filter-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .filter-bar .field {
   margin: 0;
+  min-width: 0;
 }
 
 .filter-bar .filter-search,
-.view-toggle {
+.view-toggle,
+.filter-more {
   grid-column: 1 / -1;
+}
+
+.filter-more summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.filter-more-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-block-start: var(--space-3);
+}
+
+.filter-more-fields .field {
+  margin: 0;
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .filter-more-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .view-toggle {
@@ -69,14 +101,21 @@
   margin-block-start: var(--space-4);
 }
 
-/* The board scrolls sideways inside its own box, so the page itself never does. */
+/* Four equal lanes fit on desktop. Narrow screens scroll the board sideways inside its own box, so the page never does. */
 .board {
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(200px, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: var(--space-3);
-  overflow-x: auto;
   padding-block: var(--space-2) var(--space-8);
+}
+
+@media (max-width: 900px) {
+  .board {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(240px, 1fr);
+    overflow-x: auto;
+  }
 }
 
 .board-column {
@@ -140,9 +179,9 @@
   outline-offset: 2px;
 }
 
-.board-card.is-unread .card-title,
+.board-card.is-unread .card-app,
 .request-row.is-unread {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .card-head {
@@ -154,11 +193,21 @@
 }
 
 .card-app {
+  font-size: var(--font-size-md);
   font-weight: 600;
+  overflow-wrap: anywhere;
 }
 
+/* The request title is secondary to the app name, and long titles stop after two lines. */
 .card-title {
+  display: -webkit-box;
+  overflow: hidden;
   font-size: var(--font-size-sm);
+  line-height: 1.4;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .card-meta {
