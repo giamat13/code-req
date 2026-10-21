@@ -2,21 +2,24 @@
 // Usage: npm run emulators (in one terminal), then npm run seed (in another).
 
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
-import { doc, setDoc, Timestamp, collection } from "firebase/firestore";
+import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
 import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 
 const PROJECT_ID = "demo-apprequest";
+const EMULATOR_HOST = process.env.FIRESTORE_EMULATOR_HOST ?? "127.0.0.1:8080";
+const [host, port] = EMULATOR_HOST.split(":");
 
-if (!process.env.FIRESTORE_EMULATOR_HOST) {
-  console.error(
-    "FIRESTORE_EMULATOR_HOST is not set. Start the emulators with npm run emulators first.",
-  );
+// Demo project IDs start with "demo-", so this script can never touch a real Firebase project.
+if (!PROJECT_ID.startsWith("demo-")) {
+  console.error("Refusing to run: the project ID must be a demo project.");
   process.exit(1);
 }
 
 const rules = readFileSync(new URL("../firestore.rules", import.meta.url), "utf8");
-const testEnv = await initializeTestEnvironment({ projectId: PROJECT_ID, firestore: { rules } });
+const testEnv = await initializeTestEnvironment({
+  projectId: PROJECT_ID,
+  firestore: { rules, host, port: Number(port) },
+});
 
 const now = () => Timestamp.fromMillis(Date.now() - Math.floor(Math.random() * 14) * 86_400_000);
 
@@ -141,6 +144,4 @@ await testEnv.cleanup();
 console.log(
   `Seeded ${developers.length} developers and ${requests.length} requests into ${PROJECT_ID}.`,
 );
-console.log(
-  `Developer links: ${fileURLToPath(new URL("../public/developer.html", import.meta.url))}?u=alice`,
-);
+console.log("Try: http://localhost:5000/developer.html?u=alice");
