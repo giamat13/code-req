@@ -134,6 +134,12 @@ startPage(async () => {
   const redirected = await finishRedirectSignIn();
   if (redirected) toast(t("dashboard.signedIn"));
   watchSignIn((user) => {
-    onUser(user).catch(() => renderSignedOut(t("errors.network")));
+    onUser(user).catch((error) => {
+      // The underlying error goes under the message, so a failure on this page can be reported exactly.
+      const detail = error?.code
+        ? `${error.code}: ${error.message}`
+        : String(error?.message ?? error);
+      renderSignedOut(`${t("errors.network")} ${t("errors.detail", { detail })}`);
+    });
   });
 });
