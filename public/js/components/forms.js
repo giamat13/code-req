@@ -14,7 +14,7 @@ export function errorText(error) {
 
 // Shared error and help handling. Errors are linked to the control with aria-describedby, and they
 // are announced politely when they appear.
-function decorate({ id, control, help, errorNode, helpId }) {
+function decorate({ id, control, errorNode, helpId }) {
   return {
     setError(error) {
       const message = errorText(error);
