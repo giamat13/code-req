@@ -1,7 +1,9 @@
 rules_version = '2';
 
 // Default deny: any path not matched below is rejected.
-// Keep the reserved username list in sync with public/js/domain/usernames.js.
+// Keep these lists in sync with the JavaScript constants:
+// - reserved usernames: public/js/domain/usernames.js
+// - editable request fields: public/js/domain/constants.js (EDITABLE_FIELDS)
 
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -36,6 +38,10 @@ service cloud.firestore {
 
     function isEmailOrNull(v) {
       return v == null || (isText(v, 3, 254) && v.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'));
+    }
+
+    function isPhoneOrNull(v) {
+      return v == null || (v is string && v.matches('^\\+?[0-9][0-9 ()-]{5,24}$'));
     }
 
     function isHttpsOrNull(v, max) {
@@ -81,17 +87,9 @@ service cloud.firestore {
         && d.suspended is bool;
     }
 
-    function isNewRequest(d) {
-      let dev = get(/databases/$(database)/documents/developers/$(d.developerUid)).data;
-      return d.keys().hasOnly(['developerUid', 'developerUsername', 'requesterName', 'title', 'appName',
-                               'appDescription', 'platforms', 'svgIcon', 'notes', 'template',
-                               'budgetRange', 'deadline', 'status', 'quote', 'lastMessageAt',
-                               'createdAt', 'updatedAt'])
-        && d.keys().size() == 17
-        && dev.suspended == false
-        && dev.acceptingRequests == true
-        && d.developerUsername == dev.username
-        && isText(d.requesterName, 2, 100)
+    // The content a requester may write. Used for creation and for later edits.
+    function isRequestContent(d, dev) {
+      return isText(d.requesterName, 2, 100)
         && isText(d.title, 2, 120)
         && isText(d.appName, 2, 80)
         && isText(d.appDescription, 10, 2000)
@@ -101,7 +99,22 @@ service cloud.firestore {
         && isOptionalText(d.notes, 2000)
         && (d.template == null || d.template in ['landing', 'mobile', 'tool', 'extension', 'desktop', 'other'])
         && (d.budgetRange == null || d.budgetRange in ['under_500', '500_2000', '2000_10000', 'over_10000', 'unknown'])
-        && (d.deadline == null || (d.deadline is string && d.deadline.matches('^\\d{4}-\\d{2}-\\d{2}$')))
+        && (d.deadline == null || (d.deadline is string && d.deadline.matches('^\\d{4}-\\d{2}-\\d{2}$')));
+    }
+
+    function isNewRequest(d) {
+      let dev = get(/databases/$(database)/documents/developers/$(d.developerUid)).data;
+      return d.keys().hasOnly(['developerUid', 'developerUsername', 'requesterName', 'title', 'appName',
+                               'appDescription', 'platforms', 'svgIcon', 'notes', 'template',
+                               'budgetRange', 'deadline', 'status', 'quote', 'lastMessageAt',
+                               'hasContact', 'requesterUid', 'createdAt', 'updatedAt'])
+        && d.keys().size() == 19
+        && dev.suspended == false
+        && dev.acceptingRequests == true
+        && d.developerUsername == dev.username
+        && isRequestContent(d, dev)
+        && d.hasContact is bool
+        && (d.requesterUid == null || d.requesterUid == request.auth.uid)
         && d.status == 'new'
         && d.quote == null
         && d.lastMessageAt == null
@@ -110,16 +123,20 @@ service cloud.firestore {
     }
 
     function isMessage(d) {
-      return d.keys().hasOnly(['authorRole', 'body', 'createdAt'])
+      return d.keys().hasOnly(['authorRole', 'body', 'createdAt', 'kind'])
         && d.authorRole in ['requester', 'developer']
-        && isText(d.body, 1, 2000)
-        && d.createdAt == request.time;
+        && d.createdAt == request.time
+        && ((d.kind == null && isText(d.body, 1, 2000))
+          || (d.authorRole == 'requester' && d.kind in ['edit', 'contact'] && isOptionalText(d.body, 2000)));
     }
 
-    function isContact(d) {
-      return d.keys().hasOnly(['email', 'createdAt'])
+    function isContactDoc(d) {
+      return d.keys().hasOnly(['email', 'phone', 'channel', 'availability', 'updatedAt'])
         && isEmailOrNull(d.email)
-        && d.createdAt == request.time;
+        && isPhoneOrNull(d.phone)
+        && d.channel in ['email', 'phone', 'thread']
+        && isOptionalText(d.availability, 200)
+        && d.updatedAt == request.time;
     }
 
     function isNotes(d) {
@@ -136,6 +153,7 @@ service cloud.firestore {
 
       allow create: if signedIn()
         && isUsername(username)
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
         && !exists(/databases/$(database)/documents/developers/$(request.auth.uid))
         && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
         && request.resource.data.uid == request.auth.uid
@@ -150,6 +168,7 @@ service cloud.firestore {
 
       allow create: if isOwner(uid)
         && isUsername(request.resource.data.username)
+        && request.auth.token.firebase.sign_in_provider != 'anonymous'
         && exists(/databases/$(database)/documents/usernames/$(request.resource.data.username))
         && get(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == uid
         && request.resource.data.suspended == false
@@ -192,6 +211,7 @@ service cloud.firestore {
     match /requests/{requestId} {
       allow get: if true;
       allow list: if signedIn() && resource.data.developerUid == request.auth.uid;
+      allow list: if signedIn() && resource.data.requesterUid == request.auth.uid;
       allow create: if isNewRequest(request.resource.data);
 
       // Developer: change status and quote.
@@ -208,6 +228,21 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
         && request.resource.data.updatedAt == request.time;
 
+      // Requester: edit the request while it is new or in progress.
+      allow update: if resource.data.status in ['new', 'in_progress']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'requesterName', 'title', 'appName', 'appDescription', 'platforms', 'svgIcon',
+          'notes', 'template', 'budgetRange', 'deadline', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && isRequestContent(
+          request.resource.data,
+          get(/databases/$(database)/documents/developers/$(resource.data.developerUid)).data);
+
+      // Requester: record that contact details exist. Allowed at any status.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['hasContact', 'updatedAt'])
+        && request.resource.data.hasContact is bool
+        && request.resource.data.updatedAt == request.time;
+
       // Either party: bump the thread timestamp together with a new message.
       allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessageAt'])
         && request.resource.data.lastMessageAt == request.time;
@@ -217,10 +252,10 @@ service cloud.firestore {
       match /private/{docId} {
         allow read, delete: if isDevOf(requestId);
 
-        allow create: if (docId == 'contact' && isContact(request.resource.data))
-          || (docId == 'notes' && isDevOf(requestId) && isNotes(request.resource.data));
+        // Requesters write contact details but cannot read them back. Only the developer can read them.
+        allow create, update: if docId == 'contact' && isContactDoc(request.resource.data);
 
-        allow update: if docId == 'notes' && isDevOf(requestId) && isNotes(request.resource.data);
+        allow create, update: if docId == 'notes' && isDevOf(requestId) && isNotes(request.resource.data);
       }
 
       match /messages/{messageId} {
