@@ -12,6 +12,7 @@ import { createContactFields } from "../components/contactFields.js";
 import { createRequestFields } from "../components/requestFields.js";
 import {
   avatar,
+  budgetText,
   definitionList,
   emptyState,
   linkButton,
@@ -46,7 +47,8 @@ const FIELD_LABELS = {
   svgIcon: "form.svgLabel",
   notes: "form.notes",
   template: "form.template",
-  budgetRange: "form.budget",
+  budgetMin: "form.budget",
+  budgetMax: "form.budget",
   deadline: "form.deadline",
 };
 
@@ -178,10 +180,7 @@ function renderSummary(request) {
         label: t("form.template"),
         value: request.template ? t(`template.${request.template}`) : null,
       },
-      {
-        label: t("form.budget"),
-        value: request.budgetRange ? t(`budget.${request.budgetRange}`) : null,
-      },
+      { label: t("form.budget"), value: budgetText(request) },
       { label: t("form.deadline"), value: request.deadline },
       { label: t("form.notes"), value: request.notes },
     ]),

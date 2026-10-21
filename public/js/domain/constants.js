@@ -9,15 +9,6 @@ export const BOARD_STATUSES = ["new", "in_progress", "done", "declined"];
 
 export const TEMPLATES = ["landing", "mobile", "tool", "extension", "desktop", "other"];
 
-export const BUDGET_RANGES = [
-  "unknown",
-  "free",
-  "under_500",
-  "500_2000",
-  "2000_10000",
-  "over_10000",
-];
-
 export const CURRENCIES = ["USD", "EUR", "GBP", "ILS", "CAD", "AUD", "other"];
 
 // How the developer should reach the requester. "thread" means the message thread on the tracking page.
@@ -33,7 +24,8 @@ export const EDITABLE_FIELDS = [
   "svgIcon",
   "notes",
   "template",
-  "budgetRange",
+  "budgetMin",
+  "budgetMax",
   "deadline",
 ];
 
@@ -59,6 +51,7 @@ export const LIMITS = Object.freeze({
   internalNotes: { max: 5000 },
   tags: { count: 5, length: 24 },
   messageBody: { min: 1, max: 2000 },
+  budget: { max: 10000000 },
   quoteAmount: { max: 20 },
   quoteTimeline: { max: 200 },
   reportReason: { min: 10, max: 1000 },

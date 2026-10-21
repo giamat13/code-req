@@ -8,6 +8,10 @@ AppRequest is a free, open-source static site where people request apps from dev
 
 The repo is early in Phase 0. Present: repo and tooling config, CI workflows, ADRs, and four domain modules in `public/js/domain/`. Not present yet: any HTML page, `public/css/`, `public/js/firebase-sdk.js`, `public/js/core/`, `public/js/services/`, `public/js/pages/`, `public/locales/`, `test/`, `scripts/seed-emulator.mjs`, `scripts/reset-emulator.mjs`, `playwright.config.*`, and most of `docs/`. README, CONTRIBUTING, and PROMPT.md name these files, so check that a file exists before you import it or document it.
 
+## Changelog
+
+Every change that alters behavior, data, rules, or the public site updates `CHANGELOG.md` in the same commit, under `## [Unreleased]`. Use the Keep a Changelog sections: Added, Changed, Deprecated, Removed, Fixed, Security. A change to Firestore rules also says in its entry that the rules must be deployed.
+
 ## Decisions that override PROMPT.md
 
 Where an ADR differs from `PROMPT.md`, the ADR wins:

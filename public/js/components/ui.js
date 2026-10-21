@@ -1,9 +1,19 @@
 import { h } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { t } from "../core/i18n.js";
+import { budgetOf } from "../domain/budget.js";
 import { PLATFORMS } from "../domain/constants.js";
 
 // Presentational helpers shared by the pages.
+
+// The budget as shown to people, or null when none was given. Works on a request or on the form values.
+export function budgetText(request) {
+  const budget = budgetOf(request);
+  if (budget.kind === "none") return null;
+  if (budget.kind === "free") return t("budget.free");
+  const amount = (value) => value.toLocaleString("en-US");
+  return t("budget.range", { min: amount(budget.min), max: amount(budget.max) });
+}
 
 // Built-in platforms are translated. Names a developer wrote are shown as they are.
 export function platformLabel(value) {

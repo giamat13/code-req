@@ -1,4 +1,5 @@
-import { BUDGET_RANGES, LIMITS, STATUSES, TEMPLATES } from "./constants.js";
+import { budgetOf } from "./budget.js";
+import { LIMITS, STATUSES, TEMPLATES } from "./constants.js";
 import { DAY_MS, dayKey, toMillis } from "./time.js";
 
 export const RANGES = Object.freeze(["all", "today", "week", "month"]);
@@ -9,22 +10,11 @@ const DEFAULTS = Object.freeze({
   q: "",
   status: "all",
   platform: "all",
-  budget: "all",
   template: "all",
   tag: "all",
   range: "all",
   sort: "newest",
   view: "board",
-});
-
-// Free is the lowest budget, like an unknown one.
-const BUDGET_ORDER = Object.freeze({
-  unknown: 0,
-  free: 0,
-  under_500: 1,
-  "500_2000": 2,
-  "2000_10000": 3,
-  over_10000: 4,
 });
 
 function pick(params, key, allowed) {
@@ -43,7 +33,6 @@ export function parseFilters(params) {
     q: (params.get("q") ?? "").trim(),
     status: pick(params, "status", ["all", ...STATUSES]),
     platform: parsePlatform(params.get("platform")),
-    budget: pick(params, "budget", ["all", ...BUDGET_RANGES]),
     template: pick(params, "template", ["all", "none", ...TEMPLATES]),
     tag: (params.get("tag") ?? "").trim() || DEFAULTS.tag,
     range: pick(params, "range", RANGES),
@@ -82,8 +71,6 @@ export function applyFilters(requests, filters, { now = Date.now(), notes = {} }
     const tags = notes[request.id]?.tags ?? [];
     if (filters.status !== "all" && request.status !== filters.status) return false;
     if (filters.platform !== "all" && !request.platforms.includes(filters.platform)) return false;
-    if (filters.budget !== "all" && (request.budgetRange ?? "unknown") !== filters.budget)
-      return false;
     if (filters.template !== "all" && (request.template ?? "none") !== filters.template)
       return false;
     if (filters.tag !== "all" && !tags.includes(filters.tag)) return false;
@@ -95,7 +82,8 @@ export function applyFilters(requests, filters, { now = Date.now(), notes = {} }
 
 export function sortRequests(requests, sort) {
   const created = (request) => toMillis(request.createdAt) ?? Number.MAX_SAFE_INTEGER;
-  const budget = (request) => BUDGET_ORDER[request.budgetRange ?? "unknown"] ?? 0;
+  // A request with no budget, or a free one, sorts as 0.
+  const budget = (request) => budgetOf(request).max ?? 0;
   const list = [...requests];
   if (sort === "oldest") return list.sort((a, b) => created(a) - created(b));
   if (sort === "budget") return list.sort((a, b) => budget(b) - budget(a));

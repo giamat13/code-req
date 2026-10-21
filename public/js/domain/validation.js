@@ -1,4 +1,4 @@
-import { BUDGET_RANGES, CONTACT_CHANNELS, LIMITS, PLATFORMS, TEMPLATES } from "./constants.js";
+import { CONTACT_CHANNELS, LIMITS, PLATFORMS, TEMPLATES } from "./constants.js";
 import { normalizeAcceptedPlatforms } from "./platforms.js";
 import { todayIso } from "./time.js";
 
@@ -51,6 +51,30 @@ export function normalizePlatforms(list, accepted = PLATFORMS) {
   return accepted.filter((platform) => wanted.has(platform));
 }
 
+// An empty box is null. Otherwise the text becomes a number, and the check below rejects anything that is not a whole number.
+const amountValue = (value) => {
+  const text = clean(value);
+  return text === "" ? null : Number(text);
+};
+
+function amountError(amount) {
+  if (amount === null) return null;
+  return Number.isInteger(amount) && amount >= 0 && amount <= LIMITS.budget.max
+    ? null
+    : { key: "errors.budget.integer", params: { max: LIMITS.budget.max } };
+}
+
+// The two ends are optional together. A range needs both, and its top cannot be below its bottom.
+function budgetErrors(min, max) {
+  const errors = { budgetMin: amountError(min), budgetMax: amountError(max) };
+  if (errors.budgetMin || errors.budgetMax) return errors;
+  if (min === null && max === null) return errors;
+  if (min === null) errors.budgetMin = { key: "errors.budget.pair" };
+  else if (max === null) errors.budgetMax = { key: "errors.budget.pair" };
+  else if (max < min) errors.budgetMax = { key: "errors.budget.order" };
+  return errors;
+}
+
 function collect(checks) {
   const errors = {};
   for (const [field, error] of checks) {
@@ -82,7 +106,8 @@ export function validateRequestForm(
     svgIcon: input.svgIcon ?? null,
     notes: optional(input.notes),
     template: optional(input.template),
-    budgetRange: optional(input.budgetRange),
+    budgetMin: amountValue(input.budgetMin),
+    budgetMax: amountValue(input.budgetMax),
     deadline: optional(input.deadline),
   };
 
@@ -99,12 +124,8 @@ export function validateRequestForm(
         ? null
         : { key: "errors.choice" },
     ],
-    [
-      "budgetRange",
-      values.budgetRange === null || BUDGET_RANGES.includes(values.budgetRange)
-        ? null
-        : { key: "errors.choice" },
-    ],
+    ["budgetMin", budgetErrors(values.budgetMin, values.budgetMax).budgetMin],
+    ["budgetMax", budgetErrors(values.budgetMin, values.budgetMax).budgetMax],
     ["deadline", values.deadline === null ? null : deadlineError(values.deadline, today)],
   ]);
 

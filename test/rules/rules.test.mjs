@@ -81,7 +81,8 @@ function request(overrides = {}) {
     svgIcon: null,
     notes: null,
     template: null,
-    budgetRange: null,
+    budgetMin: null,
+    budgetMax: null,
     deadline: null,
     status: "new",
     quote: null,
@@ -140,7 +141,8 @@ function clientRequest(overrides = {}) {
     svgIcon: null,
     notes: null,
     template: null,
-    budgetRange: null,
+    budgetMin: null,
+    budgetMax: null,
     deadline: null,
     status: "new",
     quote: null,
@@ -841,9 +843,36 @@ describe("custom platforms and the free budget", () => {
     );
   });
 
-  test("a free budget is accepted", async () => {
+  test("a free budget, written as 0 to 0, is accepted", async () => {
     await assertSucceeds(
-      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ budgetRange: "free" })),
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ budgetMin: 0, budgetMax: 0 })),
+    );
+  });
+
+  test("a budget range is accepted", async () => {
+    await assertSucceeds(
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ budgetMin: 500, budgetMax: 2000 })),
+    );
+  });
+
+  test("a budget with only one end is rejected", async () => {
+    await assertFails(
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ budgetMin: 500, budgetMax: null })),
+    );
+  });
+
+  test("a budget whose top is below its bottom is rejected", async () => {
+    await assertFails(
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ budgetMin: 2000, budgetMax: 500 })),
+    );
+  });
+
+  test("a budget that is not a whole number is rejected", async () => {
+    await assertFails(
+      setDoc(
+        doc(guest(), "requests", NEW_REQ),
+        clientRequest({ budgetMin: 500.5, budgetMax: 900 }),
+      ),
     );
   });
 });

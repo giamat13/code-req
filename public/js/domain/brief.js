@@ -1,5 +1,6 @@
 // A Markdown summary for pasting into an issue tracker or notes. The headings stay in English on purpose.
 // Contact details are left out, because briefs are often pasted into public places.
+import { budgetSummary } from "./budget.js";
 
 function formatQuote(quote) {
   if (!quote) return "not sent";
@@ -21,7 +22,7 @@ export function buildBrief(
     `- **Status:** ${request.status}`,
     `- **Platforms:** ${request.platforms.join(", ")}`,
     `- **Template:** ${request.template ?? "none"}`,
-    `- **Budget:** ${request.budgetRange ?? "not given"}`,
+    `- **Budget:** ${budgetSummary(request)}`,
     `- **Deadline:** ${request.deadline ?? "none"}`,
     `- **Preferred contact:** ${preferredChannel ?? "not given"}`,
     `- **Quote:** ${formatQuote(request.quote)}`,

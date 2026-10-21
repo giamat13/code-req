@@ -11,6 +11,7 @@ import { createContactFields } from "../components/contactFields.js";
 import { createRequestFields } from "../components/requestFields.js";
 import {
   avatar,
+  budgetText,
   copyButton,
   definitionList,
   emptyState,
@@ -213,10 +214,7 @@ function reviewContent(values, contactValues) {
     { label: t("form.appDescription"), value: values.appDescription },
     { label: t("form.platforms"), value: platforms },
     { label: t("form.template"), value: values.template ? t(`template.${values.template}`) : null },
-    {
-      label: t("form.budget"),
-      value: values.budgetRange ? t(`budget.${values.budgetRange}`) : null,
-    },
+    { label: t("form.budget"), value: budgetText(values) },
     { label: t("form.deadline"), value: values.deadline },
     { label: t("form.notes"), value: values.notes },
     { label: t("contact.channel"), value: t(`contact.channel.${contactValues.channel}`) },

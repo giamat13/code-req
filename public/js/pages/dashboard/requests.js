@@ -16,14 +16,9 @@ import {
   skeletonRows,
   statusBadge,
   copyButton,
+  budgetText,
 } from "../../components/ui.js";
-import {
-  BOARD_STATUSES,
-  BUDGET_RANGES,
-  PLATFORMS,
-  STATUSES,
-  TEMPLATES,
-} from "../../domain/constants.js";
+import { BOARD_STATUSES, PLATFORMS, STATUSES, TEMPLATES } from "../../domain/constants.js";
 import {
   applyFilters,
   filtersToParams,
@@ -104,11 +99,6 @@ function renderFilters() {
     $("#filter-platform"),
     [all, ...platforms.map((platform) => ({ value: platform, label: platformLabel(platform) }))],
     f.platform,
-  );
-  setOptions(
-    $("#filter-budget"),
-    [all, ...BUDGET_RANGES.map((range) => ({ value: range, label: t(`budget.${range}`) }))],
-    f.budget,
   );
   setOptions(
     $("#filter-template"),
@@ -302,11 +292,7 @@ function renderList(visible) {
             h("td", {}, formatRelative(request.createdAt)),
             h("td", {}, h("strong", {}, request.appName), h("br"), request.title),
             h("td", {}, statusBadge(request.status)),
-            h(
-              "td",
-              {},
-              request.budgetRange ? t(`budget.${request.budgetRange}`) : t("budget.notGiven"),
-            ),
+            h("td", {}, budgetText(request) ?? t("budget.notGiven")),
             h("td", {}, platformChips(request.platforms)),
           ),
         ),
@@ -447,7 +433,6 @@ function wireFilters() {
   };
   bind("#filter-status", "status");
   bind("#filter-platform", "platform");
-  bind("#filter-budget", "budget");
   bind("#filter-template", "template");
   bind("#filter-tag", "tag");
   bind("#filter-range", "range");

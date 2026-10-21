@@ -23,7 +23,8 @@ const request = (overrides) => ({
   appDescription: "Track daily habits.",
   platforms: ["web"],
   status: "new",
-  budgetRange: null,
+  budgetMin: null,
+  budgetMax: null,
   template: null,
   createdAt: NOW,
   updatedAt: NOW,
@@ -106,8 +107,8 @@ describe("applyFilters", () => {
 
 describe("sortRequests", () => {
   const requests = [
-    request({ id: "a", appName: "Zeta", createdAt: NOW - DAY, budgetRange: "under_500" }),
-    request({ id: "b", appName: "Alpha", createdAt: NOW, budgetRange: "over_10000" }),
+    request({ id: "a", appName: "Zeta", createdAt: NOW - DAY, budgetMin: 100, budgetMax: 500 }),
+    request({ id: "b", appName: "Alpha", createdAt: NOW, budgetMin: 5000, budgetMax: 10000 }),
   ];
 
   test("newest first by default", () => {

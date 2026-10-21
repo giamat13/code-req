@@ -13,16 +13,22 @@ export const FIELD_LABELS = {
   svgIcon: "form.svgLabel",
   notes: "form.notes",
   template: "form.template",
-  budgetRange: "form.budget",
+  budgetMin: "form.budget",
+  budgetMax: "form.budget",
   deadline: "form.deadline",
 };
 
 function noticeText(message) {
   if (message.kind === "edit") {
-    const fields = (message.body ?? "")
-      .split(",")
-      .filter(Boolean)
-      .map((field) => t(FIELD_LABELS[field] ?? "form.title"));
+    // Both ends of the budget share one label, so the Set lists it once.
+    const fields = [
+      ...new Set(
+        (message.body ?? "")
+          .split(",")
+          .filter(Boolean)
+          .map((field) => t(FIELD_LABELS[field] ?? "form.title")),
+      ),
+    ];
     return t("thread.noticeEdit", { fields: fields.join(", ") });
   }
   if (message.kind === "contact") return t("thread.noticeContact");

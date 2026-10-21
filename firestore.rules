@@ -73,6 +73,12 @@ service cloud.firestore {
         && (q.validUntil == null || (q.validUntil is string && q.validUntil.matches('^\\d{4}-\\d{2}-\\d{2}$'))));
     }
 
+    // Both ends are null together, or they are whole numbers with the top at or above the bottom.
+    function isBudgetPair(min, max) {
+      return (min == null && max == null)
+        || (min is int && max is int && min >= 0 && max >= min && max <= 10000000);
+    }
+
     function isProfile(d) {
       return d.keys().hasOnly(['username', 'displayName', 'bio', 'website', 'pricingNote', 'avatarUrl',
                                'acceptedPlatforms', 'acceptingRequests', 'suspended', 'createdAt', 'updatedAt'])
@@ -97,7 +103,7 @@ service cloud.firestore {
         && isSvgOrNull(d.svgIcon)
         && isOptionalText(d.notes, 2000)
         && (d.template == null || d.template in ['landing', 'mobile', 'tool', 'extension', 'desktop', 'other'])
-        && (d.budgetRange == null || d.budgetRange in ['free', 'under_500', '500_2000', '2000_10000', 'over_10000', 'unknown'])
+        && isBudgetPair(d.budgetMin, d.budgetMax)
         && (d.deadline == null || (d.deadline is string && d.deadline.matches('^\\d{4}-\\d{2}-\\d{2}$')));
     }
 
@@ -105,7 +111,7 @@ service cloud.firestore {
       let dev = get(/databases/$(database)/documents/developers/$(d.developerUid)).data;
       return d.keys().hasOnly(['developerUid', 'developerUsername', 'requesterName', 'title', 'appName',
                                'appDescription', 'platforms', 'svgIcon', 'notes', 'template',
-                               'budgetRange', 'deadline', 'status', 'quote', 'lastMessageAt',
+                               'budgetMin', 'budgetMax', 'deadline', 'status', 'quote', 'lastMessageAt',
                                'hasContact', 'requesterUid', 'createdAt', 'updatedAt'])
         && d.keys().size() == 19
         && dev.suspended == false
@@ -232,7 +238,7 @@ service cloud.firestore {
         && !(signedIn() && request.auth.uid == resource.data.developerUid)
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'requesterName', 'title', 'appName', 'appDescription', 'platforms', 'svgIcon',
-          'notes', 'template', 'budgetRange', 'deadline', 'updatedAt'])
+          'notes', 'template', 'budgetMin', 'budgetMax', 'deadline', 'updatedAt'])
         && request.resource.data.updatedAt == request.time
         && isRequestContent(
           request.resource.data,

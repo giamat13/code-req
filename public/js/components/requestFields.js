@@ -2,7 +2,7 @@ import DOMPurify from "../../vendor/dompurify/purify.es.mjs";
 import { h } from "../core/dom.js";
 import { t } from "../core/i18n.js";
 import { icon } from "../core/icons.js";
-import { BUDGET_RANGES, LIMITS, TEMPLATES } from "../domain/constants.js";
+import { LIMITS, TEMPLATES } from "../domain/constants.js";
 import { prepareSvg, svgDataUri } from "../domain/svg.js";
 import { todayIso } from "../domain/time.js";
 import { errorText, pillField, selectField, textField } from "./forms.js";
@@ -19,7 +19,8 @@ const FIELD_ORDER = [
   "platforms",
   "notes",
   "template",
-  "budgetRange",
+  "budgetMin",
+  "budgetMax",
   "deadline",
 ];
 
@@ -207,14 +208,22 @@ export function createRequestFields({ acceptedPlatforms, initial = {} }) {
       ],
       help: t("form.templateHelp"),
     }),
-    budgetRange: selectField({
-      name: "budgetRange",
-      label: t("form.budget"),
-      value: initial.budgetRange ?? "",
-      options: [
-        { value: "", label: t("budget.notGiven") },
-        ...BUDGET_RANGES.map((range) => ({ value: range, label: t(`budget.${range}`) })),
-      ],
+    budgetMin: textField({
+      name: "budgetMin",
+      label: t("form.budgetMin"),
+      value: initial.budgetMin ?? "",
+      type: "number",
+      inputmode: "numeric",
+      min: 0,
+      help: t("form.budgetHelp"),
+    }),
+    budgetMax: textField({
+      name: "budgetMax",
+      label: t("form.budgetMax"),
+      value: initial.budgetMax ?? "",
+      type: "number",
+      inputmode: "numeric",
+      min: 0,
       help: t("form.budgetHelp"),
     }),
     deadline: textField({
@@ -244,7 +253,13 @@ export function createRequestFields({ acceptedPlatforms, initial = {} }) {
     fields.platforms.root,
     fields.svgIcon.root,
     fields.notes.root,
-    h("div", { class: "field-row" }, fields.budgetRange.root, fields.deadline.root),
+    h(
+      "div",
+      { class: "field-row" },
+      fields.budgetMin.root,
+      fields.budgetMax.root,
+      fields.deadline.root,
+    ),
   );
 
   return {
@@ -262,7 +277,8 @@ export function createRequestFields({ acceptedPlatforms, initial = {} }) {
           platforms: fields.platforms.read(),
           notes: fields.notes.read(),
           template: fields.template.read(),
-          budgetRange: fields.budgetRange.read(),
+          budgetMin: fields.budgetMin.read(),
+          budgetMax: fields.budgetMax.read(),
           deadline: fields.deadline.read(),
         },
         svgError: svg.error,

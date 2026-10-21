@@ -21,7 +21,8 @@ const validRequest = {
   appDescription: "A simple app to track daily habits and streaks.",
   platforms: ["ios", "android", "web"],
   template: "mobile",
-  budgetRange: "under_500",
+  budgetMin: "100",
+  budgetMax: "500",
   deadline: "2026-12-01",
   notes: "",
 };
@@ -91,6 +92,48 @@ describe("validateRequestForm", () => {
   test("counts characters the way Firestore does (code points, not UTF-16 units)", () => {
     const result = validateRequestForm({ ...validRequest, appName: "😀" }, { today: TODAY });
     assert.equal(result.errors.appName.key, "errors.tooShort");
+  });
+});
+
+describe("validateRequestForm budget", () => {
+  const withBudget = (budgetMin, budgetMax) =>
+    validateRequestForm({ ...validRequest, budgetMin, budgetMax }, { today: TODAY });
+
+  test("a range of whole numbers becomes numbers", () => {
+    const result = withBudget("500", "2000");
+    assert.equal(result.ok, true);
+    assert.deepEqual([result.values.budgetMin, result.values.budgetMax], [500, 2000]);
+  });
+
+  test("empty ends together mean no budget was given", () => {
+    const result = withBudget("", "");
+    assert.equal(result.ok, true);
+    assert.deepEqual([result.values.budgetMin, result.values.budgetMax], [null, null]);
+  });
+
+  test("a free project is 0 to 0", () => {
+    assert.equal(withBudget("0", "0").ok, true);
+  });
+
+  test("one end alone is rejected at the empty end", () => {
+    const result = withBudget("500", "");
+    assert.equal(result.errors.budgetMax.key, "errors.budget.pair");
+    assert.equal(result.errors.budgetMin, undefined);
+  });
+
+  test("the top cannot be below the bottom", () => {
+    assert.equal(withBudget("2000", "500").errors.budgetMax.key, "errors.budget.order");
+  });
+
+  test("decimals, negatives and text are rejected", () => {
+    assert.equal(withBudget("500.5", "900").errors.budgetMin.key, "errors.budget.integer");
+    assert.equal(withBudget("-5", "900").errors.budgetMin.key, "errors.budget.integer");
+    assert.equal(withBudget("abc", "900").errors.budgetMin.key, "errors.budget.integer");
+  });
+
+  test("amounts above the limit are rejected", () => {
+    const result = withBudget("500", "10000001");
+    assert.equal(result.errors.budgetMax.key, "errors.budget.integer");
   });
 });
 

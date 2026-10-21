@@ -5,7 +5,7 @@ import { t } from "../core/i18n.js";
 import { setStatus } from "../core/page.js";
 import { toast } from "../core/toast.js";
 import { renderThread } from "./thread.js";
-import { copyText, definitionList, platformChips, statusBadge } from "./ui.js";
+import { budgetText, copyText, definitionList, platformChips, statusBadge } from "./ui.js";
 import { BOARD_STATUSES, CURRENCIES } from "../domain/constants.js";
 import { buildBrief } from "../domain/brief.js";
 import { svgDataUri } from "../domain/svg.js";
@@ -396,9 +396,7 @@ function buildBody(view) {
       {
         label: t("form.budget"),
         // Ranges such as "500–2,000" read backwards inside Hebrew text unless they are forced left to right.
-        value: request.budgetRange
-          ? h("span", { dir: "ltr" }, t(`budget.${request.budgetRange}`))
-          : null,
+        value: budgetText(request) ? h("span", { dir: "ltr" }, budgetText(request)) : null,
       },
       { label: t("form.deadline"), value: request.deadline },
       { label: t("form.notes"), value: request.notes },
