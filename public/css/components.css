@@ -917,6 +917,12 @@ dialog::backdrop {
   animation: drawer-in var(--motion-base) var(--ease-out);
 }
 
+/* Only an open drawer is a flex column, so the body fills the height and scrolls. A closed one stays hidden. */
+.drawer[open] {
+  display: flex;
+  flex-direction: column;
+}
+
 .drawer .dialog-header {
   align-items: flex-start;
 }

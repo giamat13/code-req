@@ -1,4 +1,4 @@
-/* Developer dashboard: sign-in gate, onboarding, the request list, and the drawer. */
+/* Developer dashboard: sign-in gate, onboarding, the request board and list, and the drawer. */
 
 .main-dashboard {
   padding-block-end: var(--space-12);
@@ -33,18 +33,199 @@
   margin-block-start: 0;
 }
 
-.app-toolbar .field-label {
+.filter-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+  align-items: end;
+  margin-block: var(--space-4);
+}
+
+.filter-bar .field {
   margin: 0;
 }
 
-.app-toolbar .select-compact {
-  min-width: 180px;
+.filter-bar .filter-search,
+.view-toggle {
+  grid-column: 1 / -1;
+}
+
+.view-toggle {
+  display: inline-flex;
+  gap: var(--space-2);
+  justify-self: start;
+}
+
+.view-toggle [aria-pressed="true"] {
+  background: var(--accent-soft);
+  color: var(--text);
 }
 
 #requests-count {
   font-size: var(--font-size-sm);
 }
 
-.request-list .empty-state {
+#requests-view .empty-state {
   margin-block-start: var(--space-4);
+}
+
+/* The board scrolls sideways inside its own box, so the page itself never does. */
+.board {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(200px, 1fr);
+  gap: var(--space-3);
+  overflow-x: auto;
+  padding-block: var(--space-2) var(--space-8);
+}
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 12rem;
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.board-column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.board-column-title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-heading);
+}
+
+.board-cards {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.board-card,
+.request-row {
+  cursor: pointer;
+}
+
+.board-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-1);
+  transition: border-color var(--motion-fast) var(--ease-out);
+}
+
+.board-card:hover {
+  border-color: var(--accent);
+}
+
+.board-card:focus-visible,
+.request-row:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.board-card.is-unread .card-title,
+.request-row.is-unread {
+  font-weight: 600;
+}
+
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.card-app {
+  font-weight: 600;
+}
+
+.card-title {
+  font-size: var(--font-size-sm);
+}
+
+.card-meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.unread-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.group-count {
+  min-width: 1.5rem;
+  padding-inline: var(--space-2);
+  border-radius: var(--radius-chip);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+}
+
+.request-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.request-table th,
+.request-table td {
+  padding: var(--space-3);
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--border);
+}
+
+.request-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.request-row:hover {
+  background: var(--surface-2);
+}
+
+.drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.drawer-section {
+  display: grid;
+  gap: var(--space-3);
+  padding-block: var(--space-4);
+  border-block-start: 1px solid var(--border);
+}
+
+.drawer-section .section-title {
+  margin: 0;
 }
