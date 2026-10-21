@@ -20,8 +20,11 @@
 }
 
 .brand {
-  font-weight: 700;
-  font-size: var(--font-size-lg);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--font-size-xl);
+  letter-spacing: -0.01em;
   color: var(--text);
   text-decoration: none;
   margin-inline-end: auto;
@@ -172,7 +175,11 @@
 
 .btn-ghost {
   background: transparent;
-  color: var(--accent);
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
 }
 
 .btn-ghost:hover:not(:disabled) {
@@ -626,42 +633,28 @@ legend.field-label {
   }
 }
 
+/* One ruled list, not a grid of boxes: each developer is a row between hairlines. */
 .directory-grid {
   display: grid;
-  gap: var(--space-4);
+  gap: 0;
   grid-template-columns: 1fr;
-}
-
-@media (min-width: 640px) {
-  .directory-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .directory-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  border-block-start: 2px solid var(--text);
 }
 
 .developer-card {
   display: flex;
   gap: var(--space-4);
-  align-items: flex-start;
-  padding: var(--space-4) var(--space-6);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
+  align-items: center;
+  padding: var(--space-4) var(--space-2);
+  background: transparent;
+  border-block-end: 1px solid var(--border);
   color: var(--text);
   text-decoration: none;
-  transition:
-    transform var(--motion-base) var(--ease-out),
-    box-shadow var(--motion-base) var(--ease-out);
+  transition: background var(--motion-fast) var(--ease-out);
 }
 
 .developer-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-2);
+  background: var(--surface);
   color: var(--text);
 }
 
@@ -678,8 +671,10 @@ legend.field-label {
 }
 
 .developer-card-name {
-  font-size: var(--font-size-md);
-  font-weight: 650;
+  font-family: var(--font-display);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .developer-card-handle,

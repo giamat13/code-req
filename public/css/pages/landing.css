@@ -2,8 +2,7 @@
 
 .hero {
   padding-block: var(--space-16) var(--space-12);
-  background:
-    radial-gradient(900px 400px at 85% -10%, var(--accent-soft), transparent 60%), var(--bg);
+  background: var(--bg);
 }
 
 .hero-inner {
@@ -13,8 +12,10 @@
 }
 
 .hero-title {
-  font-size: clamp(2rem, 1.2rem + 3vw, var(--font-size-3xl));
-  letter-spacing: -0.02em;
+  font-size: clamp(2.5rem, 1.4rem + 4.5vw, 5rem);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
 }
 
 .hero-body {
@@ -61,16 +62,17 @@
   }
 }
 
+/* Steps are ruled columns: a heavy top rule, no boxes. */
 .step-card {
   position: relative;
-  padding: var(--space-6);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
+  padding: var(--space-4) var(--space-4) 0 0;
+  background: transparent;
+  border-block-start: 2px solid var(--text);
 }
 
 .step-card h3 {
   margin-block-end: var(--space-2);
+  font-size: var(--font-size-xl);
 }
 
 .step-card p {
@@ -79,15 +81,13 @@
 }
 
 .step-number {
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
+  display: block;
   margin-block-end: var(--space-3);
-  border-radius: 50%;
-  background: var(--accent);
-  color: var(--on-accent);
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-style: italic;
+  line-height: 1;
+  color: var(--text);
 }
 
 .cta-inner {
@@ -96,10 +96,9 @@
   justify-content: space-between;
   gap: var(--space-6);
   flex-wrap: wrap;
-  padding: var(--space-8);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
+  padding: var(--space-8) 0;
+  background: transparent;
+  border-block: 2px solid var(--text);
 }
 
 .cta-inner p {

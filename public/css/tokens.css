@@ -12,33 +12,38 @@
 :root {
   color-scheme: light;
 
-  --bg: #fafafa;
-  --surface: #ffffff;
-  --surface-2: #f4f4f5;
-  --border: #e4e4e7;
-  --text: #18181b;
-  --text-muted: #71717a;
+  /* Paper and ink. The warm ground keeps long reading comfortable. */
+  --bg: #f2eee6;
+  --surface: #fbf9f4;
+  --surface-2: #e9e4d9;
+  --border: #cfc8ba;
+  --text: #1b1a17;
+  --text-muted: #5e5a50;
 
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --on-accent: #ffffff;
-  --accent-soft: #eef2ff;
+  /* Vermilion is the single accent. Text on it is ink, which passes contrast; the accent itself is never text. */
+  --accent: #d9482b;
+  --accent-hover: #b93a20;
+  --on-accent: #1b1a17;
+  --accent-soft: #f6d9cf;
 
-  --success: #15803d;
-  --success-soft: #dcfce7;
-  --warning: #b45309;
-  --warning-soft: #fef3c7;
-  --danger: #b91c1c;
-  --danger-soft: #fee2e2;
-  --info: #0369a1;
-  --info-soft: #e0f2fe;
+  --success: #2f7d4f;
+  --success-soft: #dcebdd;
+  --warning: #8a5a00;
+  --warning-soft: #f7e7c2;
+  --danger: #a8281a;
+  --danger-soft: #f6d6d0;
+  --info: #1f5f8b;
+  --info-soft: #d9e7f1;
 
-  --focus-ring: 0 0 0 3px rgb(99 102 241 / 0.45);
-  --shadow-1: 0 1px 2px rgb(24 24 27 / 0.06), 0 1px 1px rgb(24 24 27 / 0.04);
-  --shadow-2: 0 10px 30px rgb(24 24 27 / 0.12), 0 2px 6px rgb(24 24 27 / 0.06);
+  --focus-ring: 0 0 0 3px rgb(217 72 43 / 0.45);
+  --shadow-1: 0 1px 0 rgb(27 26 23 / 0.06);
+  --shadow-2: 0 12px 28px rgb(27 26 23 / 0.14), 0 2px 6px rgb(27 26 23 / 0.08);
 
   --font:
     "Inter", "Segoe UI", system-ui, -apple-system, Roboto, Arial, "Helvetica Neue", sans-serif;
+  --font-display:
+    ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "Cascadia Code", Consolas, "Liberation Mono", monospace;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
@@ -46,7 +51,7 @@
   --font-size-xl: 1.5rem;
   --font-size-2xl: 2rem;
   --font-size-3xl: 2.75rem;
-  --font-weight-heading: 650;
+  --font-weight-heading: 600;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -57,8 +62,9 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  --radius-control: 8px;
-  --radius-card: 12px;
+  /* Square-ish corners: an editorial page, not a dashboard of rounded cards. Chips stay pills. */
+  --radius-control: 2px;
+  --radius-card: 2px;
   --radius-chip: 999px;
 
   --motion-fast: 150ms;
@@ -72,51 +78,51 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #09090b;
-    --surface: #18181b;
-    --surface-2: #27272a;
-    --border: #3f3f46;
-    --text: #fafafa;
-    --text-muted: #a1a1aa;
-    --accent: #818cf8;
-    --accent-hover: #a5b4fc;
-    --on-accent: #09090b;
-    --accent-soft: #1e1b4b;
-    --success: #4ade80;
-    --success-soft: #052e16;
-    --warning: #fbbf24;
-    --warning-soft: #422006;
-    --danger: #f87171;
-    --danger-soft: #450a0a;
-    --info: #38bdf8;
-    --info-soft: #082f49;
-    --focus-ring: 0 0 0 3px rgb(129 140 248 / 0.5);
-    --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-2: 0 10px 30px rgb(0 0 0 / 0.5);
+    --bg: #161513;
+    --surface: #1f1e1b;
+    --surface-2: #2a2823;
+    --border: #3d3a33;
+    --text: #f2eee6;
+    --text-muted: #b3ada0;
+    --accent: #ff7a5c;
+    --accent-hover: #ffa08a;
+    --on-accent: #161513;
+    --accent-soft: #3a2019;
+    --success: #7fd39b;
+    --success-soft: #16301f;
+    --warning: #f2c46d;
+    --warning-soft: #3a2c10;
+    --danger: #ff8a7a;
+    --danger-soft: #3d1a15;
+    --info: #7cc0ea;
+    --info-soft: #132d3d;
+    --focus-ring: 0 0 0 3px rgb(255 122 92 / 0.5);
+    --shadow-1: 0 1px 0 rgb(0 0 0 / 0.4);
+    --shadow-2: 0 12px 28px rgb(0 0 0 / 0.5);
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #09090b;
-  --surface: #18181b;
-  --surface-2: #27272a;
-  --border: #3f3f46;
-  --text: #fafafa;
-  --text-muted: #a1a1aa;
-  --accent: #818cf8;
-  --accent-hover: #a5b4fc;
-  --on-accent: #09090b;
-  --accent-soft: #1e1b4b;
-  --success: #4ade80;
-  --success-soft: #052e16;
-  --warning: #fbbf24;
-  --warning-soft: #422006;
-  --danger: #f87171;
-  --danger-soft: #450a0a;
-  --info: #38bdf8;
-  --info-soft: #082f49;
-  --focus-ring: 0 0 0 3px rgb(129 140 248 / 0.5);
-  --shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-2: 0 10px 30px rgb(0 0 0 / 0.5);
+  --bg: #161513;
+  --surface: #1f1e1b;
+  --surface-2: #2a2823;
+  --border: #3d3a33;
+  --text: #f2eee6;
+  --text-muted: #b3ada0;
+  --accent: #ff7a5c;
+  --accent-hover: #ffa08a;
+  --on-accent: #161513;
+  --accent-soft: #3a2019;
+  --success: #7fd39b;
+  --success-soft: #16301f;
+  --warning: #f2c46d;
+  --warning-soft: #3a2c10;
+  --danger: #ff8a7a;
+  --danger-soft: #3d1a15;
+  --info: #7cc0ea;
+  --info-soft: #132d3d;
+  --focus-ring: 0 0 0 3px rgb(255 122 92 / 0.5);
+  --shadow-1: 0 1px 0 rgb(0 0 0 / 0.4);
+  --shadow-2: 0 12px 28px rgb(0 0 0 / 0.5);
 }
