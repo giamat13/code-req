@@ -1,6 +1,6 @@
-// Writes public/js/firebase-config.js from FIREBASE_* environment variables and
-// fills the __SITE_URL__ placeholder used by sitemap, robots, and Open Graph tags.
-// Without variables the file keeps placeholder values, which the app reports as "not configured".
+// Writes public/js/firebase-config.js from FIREBASE_* environment variables (npm run config), and fills the
+// __SITE_URL__ placeholder used by sitemap, robots, and Open Graph tags. With --site-only the config file is left
+// alone, which the Pages and deploy workflows use because the Firebase config is committed.
 
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { extname, join } from "node:path";
@@ -76,12 +76,16 @@ async function fillSiteUrl(siteUrl) {
   return changed;
 }
 
-await writeFile(configFile, renderConfig());
-console.log(
-  envValue("FIREBASE_PROJECT_ID")
-    ? "Wrote public/js/firebase-config.js from FIREBASE_* variables."
-    : "Wrote public/js/firebase-config.js with placeholders (FIREBASE_PROJECT_ID is not set).",
-);
+// --site-only leaves public/js/firebase-config.js alone, so the committed Firebase values stay as they are.
+const siteOnly = process.argv.includes("--site-only");
+if (!siteOnly) {
+  await writeFile(configFile, renderConfig());
+  console.log(
+    envValue("FIREBASE_PROJECT_ID")
+      ? "Wrote public/js/firebase-config.js from FIREBASE_* variables."
+      : "Wrote public/js/firebase-config.js with placeholders (FIREBASE_PROJECT_ID is not set).",
+  );
+}
 
 const siteUrl = envValue("SITE_URL");
 if (siteUrl) {

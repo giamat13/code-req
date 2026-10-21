@@ -1,6 +1,6 @@
 # 0011: Firebase configuration comes from environment variables
 
-- Status: Accepted
+- Status: Partly superseded by 0016 (the Firebase values are committed; the `__SITE_URL__` decision still applies)
 - Date: 2026-10-21
 
 ## Context

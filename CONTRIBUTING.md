@@ -23,7 +23,7 @@ To load sample data, run `npm run seed` while the emulators are running. `npm ru
 | `npm run test:unit`                       | Unit tests (`node:test`)                                            |
 | `npm run test:rules`                      | Firestore rules tests against the emulator                          |
 | `npm run test:e2e`                        | End-to-end tests (needs the emulators running)                      |
-| `npm run config`                          | Writes `public/js/firebase-config.js` from `FIREBASE_*` variables   |
+| `npm run config`                          | Regenerates `public/js/firebase-config.js` from `FIREBASE_*` vars   |
 | `npm run vendor`                          | Copies DOMPurify and the font into `public/` after a version change |
 
 Run `npm run check` before you push. It covers lint, format, translations, and unit tests.
