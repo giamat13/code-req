@@ -17,17 +17,18 @@ import { withTimeout } from "../core/timeout.js";
 import { db } from "./firebase.js";
 import { readDocument } from "./restDocs.js";
 
-// How long the SDK gets before the REST API answers the same lookup instead.
+const REST_LOOKUP_MS = 6000;
 const SDK_LOOKUP_MS = 6000;
 
 // Returns the developer's public profile for a username, or null. A suspended developer
 // returns { unavailable: true } because Firestore denies the read to anonymous visitors.
-// The SDK is the normal path. If its connection stalls or fails, the REST API answers the same lookup over plain HTTPS.
+// The lookup is public, so it goes over the REST API first. REST opens no streaming connection. The SDK's reads do,
+// and stalled streams can use up the browser's few connections to Firestore and hold up every later request.
 export async function findDeveloper(username) {
   try {
-    return await withTimeout(findDeveloperWithSdk(username), SDK_LOOKUP_MS);
+    return await withTimeout(findDeveloperWithRest(username), REST_LOOKUP_MS);
   } catch {
-    return findDeveloperWithRest(username);
+    return withTimeout(findDeveloperWithSdk(username), SDK_LOOKUP_MS);
   }
 }
 
