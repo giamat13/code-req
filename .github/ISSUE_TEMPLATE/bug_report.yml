@@ -1,0 +1,55 @@
+name: Bug report
+description: Something does not work the way the documentation says.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting. Do not include tracking links, emails, or other personal data.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Click ...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Firefox 130 on Windows 11
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Where is the site running?
+      options:
+        - Firebase Hosting
+        - GitHub Pages
+        - Local emulators
+        - Other (describe below)
+    validations:
+      required: true
+  - type: dropdown
+    id: locale
+    attributes:
+      label: Language
+      options:
+        - English
+        - Hebrew
+        - Other
+  - type: textarea
+    id: console
+    attributes:
+      label: Console output
+      description: Paste errors from the browser developer tools.
+      render: text

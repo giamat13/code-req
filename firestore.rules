@@ -1,0 +1,265 @@
+rules_version = '2';
+
+// Default deny: any path not matched below is rejected.
+// Keep the reserved username list in sync with public/js/domain/usernames.js.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isPlatformAdmin() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/platformAdmins/$(request.auth.uid));
+    }
+
+    function isDevOf(requestId) {
+      return signedIn()
+        && get(/databases/$(database)/documents/requests/$(requestId)).data.developerUid == request.auth.uid;
+    }
+
+    function isText(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    function isOptionalText(v, max) {
+      return v == null || isText(v, 0, max);
+    }
+
+    function isEmailOrNull(v) {
+      return v == null || (isText(v, 3, 254) && v.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'));
+    }
+
+    function isHttpsOrNull(v, max) {
+      return v == null || (v is string && v.size() <= max && v.matches('^https://.+'));
+    }
+
+    function isUsername(v) {
+      return v is string
+        && v.matches('^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$')
+        && !(v in ['about', 'admin', 'api', 'apprequest', 'assets', 'dashboard', 'developer', 'help',
+                   'login', 'logout', 'moderation', 'new', 'null', 'official', 'privacy', 'root',
+                   'settings', 'static', 'support', 'track', 'undefined']);
+    }
+
+    function isPlatforms(v) {
+      return v is list && v.size() >= 1 && v.size() <= 7
+        && v.hasOnly(['web', 'windows', 'macos', 'linux', 'android', 'ios', 'other']);
+    }
+
+    function isSvgOrNull(v) {
+      return v == null || (isText(v, 10, 100000) && v.matches('(?s)^\\s*<svg.*</svg>\\s*$'));
+    }
+
+    function isQuoteOrNull(q) {
+      return q == null || (q is map
+        && q.keys().hasOnly(['amount', 'currency', 'timeline', 'validUntil'])
+        && isText(q.amount, 1, 20)
+        && q.currency is string && q.currency.matches('^[A-Z]{3}$')
+        && isOptionalText(q.timeline, 200)
+        && (q.validUntil == null || (q.validUntil is string && q.validUntil.matches('^\\d{4}-\\d{2}-\\d{2}$'))));
+    }
+
+    function isProfile(d) {
+      return d.keys().hasOnly(['username', 'displayName', 'bio', 'website', 'pricingNote', 'avatarUrl',
+                               'acceptedPlatforms', 'acceptingRequests', 'suspended', 'createdAt', 'updatedAt'])
+        && isText(d.displayName, 1, 60)
+        && isOptionalText(d.bio, 280)
+        && isOptionalText(d.pricingNote, 120)
+        && isHttpsOrNull(d.website, 200)
+        && isHttpsOrNull(d.avatarUrl, 500)
+        && isPlatforms(d.acceptedPlatforms)
+        && d.acceptingRequests is bool
+        && d.suspended is bool;
+    }
+
+    function isNewRequest(d) {
+      let dev = get(/databases/$(database)/documents/developers/$(d.developerUid)).data;
+      return d.keys().hasOnly(['developerUid', 'developerUsername', 'requesterName', 'title', 'appName',
+                               'appDescription', 'platforms', 'svgIcon', 'notes', 'template',
+                               'budgetRange', 'deadline', 'status', 'quote', 'lastMessageAt',
+                               'createdAt', 'updatedAt'])
+        && d.keys().size() == 17
+        && dev.suspended == false
+        && dev.acceptingRequests == true
+        && d.developerUsername == dev.username
+        && isText(d.requesterName, 2, 100)
+        && isText(d.title, 2, 120)
+        && isText(d.appName, 2, 80)
+        && isText(d.appDescription, 10, 2000)
+        && isPlatforms(d.platforms)
+        && d.platforms.hasOnly(dev.acceptedPlatforms)
+        && isSvgOrNull(d.svgIcon)
+        && isOptionalText(d.notes, 2000)
+        && (d.template == null || d.template in ['landing', 'mobile', 'tool', 'extension', 'desktop', 'other'])
+        && (d.budgetRange == null || d.budgetRange in ['under_500', '500_2000', '2000_10000', 'over_10000', 'unknown'])
+        && (d.deadline == null || (d.deadline is string && d.deadline.matches('^\\d{4}-\\d{2}-\\d{2}$')))
+        && d.status == 'new'
+        && d.quote == null
+        && d.lastMessageAt == null
+        && d.createdAt == request.time
+        && d.updatedAt == request.time;
+    }
+
+    function isMessage(d) {
+      return d.keys().hasOnly(['authorRole', 'body', 'createdAt'])
+        && d.authorRole in ['requester', 'developer']
+        && isText(d.body, 1, 2000)
+        && d.createdAt == request.time;
+    }
+
+    function isContact(d) {
+      return d.keys().hasOnly(['email', 'createdAt'])
+        && isEmailOrNull(d.email)
+        && d.createdAt == request.time;
+    }
+
+    function isNotes(d) {
+      return d.keys().hasOnly(['internalNotes', 'tags', 'updatedAt'])
+        && isOptionalText(d.internalNotes, 5000)
+        && d.tags is list && d.tags.size() <= 5
+        && d.updatedAt == request.time;
+    }
+
+    // ---------- usernames and developers ----------
+
+    match /usernames/{username} {
+      allow get, list: if true;
+
+      allow create: if signedIn()
+        && isUsername(username)
+        && !exists(/databases/$(database)/documents/developers/$(request.auth.uid))
+        && request.resource.data.keys().hasOnly(['uid', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+
+      allow delete: if isOwner(resource.data.uid);
+    }
+
+    match /developers/{uid} {
+      allow get: if resource == null || isOwner(uid) || resource.data.suspended == false || isPlatformAdmin();
+      allow list: if resource.data.suspended == false || isPlatformAdmin();
+
+      allow create: if isOwner(uid)
+        && isUsername(request.resource.data.username)
+        && exists(/databases/$(database)/documents/usernames/$(request.resource.data.username))
+        && get(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == uid
+        && request.resource.data.suspended == false
+        && request.resource.data.acceptingRequests == true
+        && isProfile(request.resource.data)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      allow update: if isOwner(uid)
+        && request.resource.data.username == resource.data.username
+        && request.resource.data.suspended == resource.data.suspended
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && isProfile(request.resource.data);
+
+      allow update: if isPlatformAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['suspended', 'acceptingRequests', 'updatedAt']);
+
+      allow delete: if isOwner(uid);
+
+      match /portfolio/{requestId} {
+        allow read: if true;
+        allow delete: if isOwner(uid);
+
+        allow create, update: if isOwner(uid)
+          && get(/databases/$(database)/documents/requests/$(requestId)).data.developerUid == uid
+          && get(/databases/$(database)/documents/requests/$(requestId)).data.status == 'done'
+          && request.resource.data.keys().hasOnly(['title', 'appName', 'platforms', 'svgIcon', 'projectUrl', 'shippedAt'])
+          && isText(request.resource.data.title, 2, 120)
+          && isText(request.resource.data.appName, 2, 80)
+          && isPlatforms(request.resource.data.platforms)
+          && isSvgOrNull(request.resource.data.svgIcon)
+          && isHttpsOrNull(request.resource.data.projectUrl, 300)
+          && request.resource.data.shippedAt is timestamp;
+      }
+    }
+
+    // ---------- requests ----------
+
+    match /requests/{requestId} {
+      allow get: if true;
+      allow list: if signedIn() && resource.data.developerUid == request.auth.uid;
+      allow create: if isNewRequest(request.resource.data);
+
+      // Developer: change status and quote.
+      allow update: if signedIn()
+        && resource.data.developerUid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'quote', 'updatedAt'])
+        && request.resource.data.status in ['new', 'in_progress', 'done', 'declined', 'cancelled']
+        && request.resource.data.updatedAt == request.time
+        && isQuoteOrNull(request.resource.data.quote);
+
+      // Requester: cancel while the request is still new. Access is by possession of the ID.
+      allow update: if resource.data.status == 'new'
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && request.resource.data.updatedAt == request.time;
+
+      // Either party: bump the thread timestamp together with a new message.
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lastMessageAt'])
+        && request.resource.data.lastMessageAt == request.time;
+
+      allow delete: if signedIn() && resource.data.developerUid == request.auth.uid;
+
+      match /private/{docId} {
+        allow read, delete: if isDevOf(requestId);
+
+        allow create: if (docId == 'contact' && isContact(request.resource.data))
+          || (docId == 'notes' && isDevOf(requestId) && isNotes(request.resource.data));
+
+        allow update: if docId == 'notes' && isDevOf(requestId) && isNotes(request.resource.data);
+      }
+
+      match /messages/{messageId} {
+        allow read: if true;
+
+        allow create: if isMessage(request.resource.data)
+          && ((request.resource.data.authorRole == 'requester'
+                && get(/databases/$(database)/documents/requests/$(requestId)).data.status != 'cancelled')
+              || (request.resource.data.authorRole == 'developer' && isDevOf(requestId)));
+
+        allow delete: if isDevOf(requestId);
+      }
+    }
+
+    // ---------- moderation ----------
+
+    match /reports/{reportId} {
+      allow create: if request.resource.data.keys().hasOnly(['targetUid', 'reason', 'status', 'createdAt'])
+        && request.resource.data.targetUid is string
+        && isText(request.resource.data.reason, 10, 1000)
+        && request.resource.data.status == 'open'
+        && request.resource.data.createdAt == request.time;
+
+      allow read, delete: if isPlatformAdmin();
+
+      allow update: if isPlatformAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'resolvedAt']);
+    }
+
+    match /auditLog/{entryId} {
+      allow read: if isPlatformAdmin();
+
+      allow create: if isPlatformAdmin()
+        && request.resource.data.actorUid == request.auth.uid
+        && request.resource.data.createdAt == request.time;
+    }
+
+    match /platformAdmins/{uid} {
+      allow get: if isOwner(uid);
+    }
+  }
+}

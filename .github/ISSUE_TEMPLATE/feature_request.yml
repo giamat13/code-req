@@ -1,0 +1,30 @@
+name: Feature request
+description: Suggest an improvement or a new capability.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the user experience, including keyboard and screen-reader behavior if the change touches the UI.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+  - type: checkboxes
+    id: constraints
+    attributes:
+      label: Constraints
+      description: The project keeps these rules. Tick each one your proposal respects.
+      options:
+        - label: It needs no build step for the runtime code.
+        - label: It runs on the Firebase Spark (free) plan without Cloud Functions.
+        - label: It works on GitHub Pages as well as Firebase Hosting.

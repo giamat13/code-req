@@ -1,0 +1,14 @@
+{
+  "name": "AppRequest",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": { "version": "21" }
+  },
+  "postCreateCommand": "npm ci && npx playwright install --with-deps chromium",
+  "forwardPorts": [4000, 5000, 8080, 9099],
+  "customizations": {
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+    }
+  }
+}

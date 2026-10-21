@@ -1,0 +1,6 @@
+# Every change needs a review from a maintainer.
+* @giamat13
+
+# Security rules and the reporting flow get extra scrutiny.
+/firestore.rules @giamat13
+/SECURITY.md @giamat13
