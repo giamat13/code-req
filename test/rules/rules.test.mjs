@@ -803,6 +803,51 @@ describe("portfolio", () => {
   });
 });
 
+describe("custom platforms and the free budget", () => {
+  beforeEach(seed);
+
+  test("a developer can accept a platform of their own", async () => {
+    await assertSucceeds(
+      updateDoc(doc(signedIn(DEV), "developers", DEV), {
+        acceptedPlatforms: ["web", "Apple Watch"],
+        updatedAt: serverTimestamp(),
+      }),
+    );
+  });
+
+  test("a request can use a platform the developer accepts, including one of their own", async () => {
+    await updateDoc(doc(signedIn(DEV), "developers", DEV), {
+      acceptedPlatforms: ["web", "Apple Watch"],
+      updatedAt: serverTimestamp(),
+    });
+    await assertSucceeds(
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ platforms: ["Apple Watch"] })),
+    );
+  });
+
+  test("a platform the developer no longer accepts is rejected", async () => {
+    await assertFails(
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ platforms: ["Apple Watch"] })),
+    );
+  });
+
+  test("a developer cannot accept more than twenty platforms", async () => {
+    const many = Array.from({ length: 21 }, (_, index) => `Device ${index}`);
+    await assertFails(
+      updateDoc(doc(signedIn(DEV), "developers", DEV), {
+        acceptedPlatforms: many,
+        updatedAt: serverTimestamp(),
+      }),
+    );
+  });
+
+  test("a free budget is accepted", async () => {
+    await assertSucceeds(
+      setDoc(doc(guest(), "requests", NEW_REQ), clientRequest({ budgetRange: "free" })),
+    );
+  });
+});
+
 describe("reports and audit log", () => {
   beforeEach(seed);
 

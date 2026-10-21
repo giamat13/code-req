@@ -1,8 +1,14 @@
 import { h } from "../core/dom.js";
 import { icon } from "../core/icons.js";
 import { t } from "../core/i18n.js";
+import { PLATFORMS } from "../domain/constants.js";
 
 // Presentational helpers shared by the pages.
+
+// Built-in platforms are translated. Names a developer wrote are shown as they are.
+export function platformLabel(value) {
+  return PLATFORMS.includes(value) ? t(`platform.${value}`) : value;
+}
 
 export function avatar({ src = null, name = "", size = "md" }) {
   if (src) {
@@ -49,7 +55,7 @@ export function platformChips(platforms) {
   return h(
     "ul",
     { class: "chip-list", "aria-label": t("common.platforms") },
-    platforms.map((platform) => h("li", { class: "chip" }, t(`platform.${platform}`))),
+    platforms.map((platform) => h("li", { class: "chip" }, platformLabel(platform))),
   );
 }
 

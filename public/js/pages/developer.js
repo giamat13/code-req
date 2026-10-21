@@ -16,6 +16,7 @@ import {
   emptyState,
   linkButton,
   platformChips,
+  platformLabel,
 } from "../components/ui.js";
 import { COOLDOWN_SECONDS, DRAFT_DEBOUNCE_MS } from "../domain/constants.js";
 import { extractUsername, usernameError } from "../domain/usernames.js";
@@ -190,7 +191,7 @@ function applyCooldown(submitButton) {
 }
 
 function reviewContent(values, contactValues) {
-  const platforms = values.platforms.map((platform) => t(`platform.${platform}`)).join(", ");
+  const platforms = values.platforms.map((platform) => platformLabel(platform)).join(", ");
   return definitionList([
     { label: t("form.requesterName"), value: values.requesterName },
     { label: t("form.title"), value: values.title },

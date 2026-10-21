@@ -1,4 +1,5 @@
 import { BUDGET_RANGES, CONTACT_CHANNELS, LIMITS, PLATFORMS, TEMPLATES } from "./constants.js";
+import { normalizeAcceptedPlatforms } from "./platforms.js";
 import { todayIso } from "./time.js";
 
 // Each validator returns { ok, errors, values, firstError }. An error is { key, params } so the UI can translate it.
@@ -44,9 +45,10 @@ export function deadlineError(value, today = todayIso()) {
   return value < today ? { key: "errors.dateInPast" } : null;
 }
 
+// Keeps the requester's choice inside the developer's accepted list, in the developer's order.
 export function normalizePlatforms(list, accepted = PLATFORMS) {
   const wanted = new Set(Array.isArray(list) ? list : []);
-  return PLATFORMS.filter((platform) => wanted.has(platform) && accepted.includes(platform));
+  return accepted.filter((platform) => wanted.has(platform));
 }
 
 function collect(checks) {
@@ -152,12 +154,13 @@ export function contactState(values) {
 }
 
 export function validateProfile(input) {
+  const accepted = normalizeAcceptedPlatforms(input.acceptedPlatforms);
   const values = {
     displayName: clean(input.displayName),
     bio: optional(input.bio),
     website: optional(input.website),
     pricingNote: optional(input.pricingNote),
-    acceptedPlatforms: normalizePlatforms(input.acceptedPlatforms),
+    acceptedPlatforms: accepted.value,
     acceptingRequests: Boolean(input.acceptingRequests),
   };
 
@@ -172,10 +175,7 @@ export function validateProfile(input) {
         ? null
         : { key: "errors.url" },
     ],
-    [
-      "acceptedPlatforms",
-      values.acceptedPlatforms.length === 0 ? { key: "errors.platforms" } : null,
-    ],
+    ["acceptedPlatforms", accepted.error],
   ]);
 
   return result(values, errors);

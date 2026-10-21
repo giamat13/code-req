@@ -57,8 +57,7 @@ service cloud.firestore {
     }
 
     function isPlatforms(v) {
-      return v is list && v.size() >= 1 && v.size() <= 7
-        && v.hasOnly(['web', 'windows', 'macos', 'linux', 'android', 'ios', 'other']);
+      return v is list && v.size() >= 1 && v.size() <= 20;
     }
 
     function isSvgOrNull(v) {
@@ -98,7 +97,7 @@ service cloud.firestore {
         && isSvgOrNull(d.svgIcon)
         && isOptionalText(d.notes, 2000)
         && (d.template == null || d.template in ['landing', 'mobile', 'tool', 'extension', 'desktop', 'other'])
-        && (d.budgetRange == null || d.budgetRange in ['under_500', '500_2000', '2000_10000', 'over_10000', 'unknown'])
+        && (d.budgetRange == null || d.budgetRange in ['free', 'under_500', '500_2000', '2000_10000', 'over_10000', 'unknown'])
         && (d.deadline == null || (d.deadline is string && d.deadline.matches('^\\d{4}-\\d{2}-\\d{2}$')));
     }
 

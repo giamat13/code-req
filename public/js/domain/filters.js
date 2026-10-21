@@ -1,4 +1,4 @@
-import { BUDGET_RANGES, PLATFORMS, STATUSES, TEMPLATES } from "./constants.js";
+import { BUDGET_RANGES, LIMITS, STATUSES, TEMPLATES } from "./constants.js";
 import { DAY_MS, dayKey, toMillis } from "./time.js";
 
 export const RANGES = Object.freeze(["all", "today", "week", "month"]);
@@ -17,8 +17,10 @@ const DEFAULTS = Object.freeze({
   view: "board",
 });
 
+// Free is the lowest budget, like an unknown one.
 const BUDGET_ORDER = Object.freeze({
   unknown: 0,
+  free: 0,
   under_500: 1,
   "500_2000": 2,
   "2000_10000": 3,
@@ -30,11 +32,17 @@ function pick(params, key, allowed) {
   return allowed.includes(value) ? value : DEFAULTS[key];
 }
 
+// Developers name their own platforms, so any name up to the length limit is a valid filter.
+function parsePlatform(value) {
+  const text = (value ?? "").trim();
+  return text === "" || [...text].length > LIMITS.platformName.max ? DEFAULTS.platform : text;
+}
+
 export function parseFilters(params) {
   return {
     q: (params.get("q") ?? "").trim(),
     status: pick(params, "status", ["all", ...STATUSES]),
-    platform: pick(params, "platform", ["all", ...PLATFORMS]),
+    platform: parsePlatform(params.get("platform")),
     budget: pick(params, "budget", ["all", ...BUDGET_RANGES]),
     template: pick(params, "template", ["all", "none", ...TEMPLATES]),
     tag: (params.get("tag") ?? "").trim() || DEFAULTS.tag,

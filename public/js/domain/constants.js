@@ -9,7 +9,14 @@ export const BOARD_STATUSES = ["new", "in_progress", "done", "declined"];
 
 export const TEMPLATES = ["landing", "mobile", "tool", "extension", "desktop", "other"];
 
-export const BUDGET_RANGES = ["unknown", "under_500", "500_2000", "2000_10000", "over_10000"];
+export const BUDGET_RANGES = [
+  "unknown",
+  "free",
+  "under_500",
+  "500_2000",
+  "2000_10000",
+  "over_10000",
+];
 
 export const CURRENCIES = ["USD", "EUR", "GBP", "ILS", "CAD", "AUD", "other"];
 
@@ -30,6 +37,10 @@ export const EDITABLE_FIELDS = [
   "deadline",
 ];
 
+// A developer can accept at most PLATFORM_LIMIT platforms, and CUSTOM_PLATFORM_LIMIT of them can be names of their own.
+export const PLATFORM_LIMIT = 20;
+export const CUSTOM_PLATFORM_LIMIT = 10;
+
 export const LIMITS = Object.freeze({
   requesterName: { min: 2, max: 100 },
   email: { max: 254 },
@@ -38,6 +49,7 @@ export const LIMITS = Object.freeze({
   appDescription: { min: 10, max: 2000 },
   notes: { max: 2000 },
   availability: { max: 200 },
+  platformName: { max: 30 },
   svgBytes: 100000,
   displayName: { min: 1, max: 60 },
   bio: { max: 280 },
@@ -50,6 +62,9 @@ export const LIMITS = Object.freeze({
   quoteAmount: { max: 20 },
   quoteTimeline: { max: 200 },
   reportReason: { min: 10, max: 1000 },
+  requestListMax: 200,
+  directoryMax: 200,
+  threadMax: 500,
 });
 
 export const PAGE_SIZE = 24;

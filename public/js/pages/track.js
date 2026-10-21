@@ -17,6 +17,7 @@ import {
   linkButton,
   platformChips,
   statusBadge,
+  platformLabel,
 } from "../components/ui.js";
 import { LIMITS } from "../domain/constants.js";
 import { changedFields } from "../domain/edits.js";
@@ -171,7 +172,7 @@ function renderSummary(request) {
       { label: t("form.appDescription"), value: request.appDescription },
       {
         label: t("form.platforms"),
-        value: request.platforms.map((platform) => t(`platform.${platform}`)).join(", "),
+        value: request.platforms.map((platform) => platformLabel(platform)).join(", "),
       },
       {
         label: t("form.template"),

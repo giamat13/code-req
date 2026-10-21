@@ -4,7 +4,13 @@ import { formatDate } from "../core/format.js";
 import { t } from "../core/i18n.js";
 import { startPage, setStatus } from "../core/page.js";
 import { developerUrl, trackUrl } from "../core/router.js";
-import { avatar, emptyState, platformChips, skeletonRows } from "../components/ui.js";
+import {
+  avatar,
+  emptyState,
+  platformChips,
+  platformLabel,
+  skeletonRows,
+} from "../components/ui.js";
 import { PAGE_SIZE } from "../domain/constants.js";
 import { toMillis } from "../domain/time.js";
 import { extractUsername, usernameError } from "../domain/usernames.js";
@@ -43,7 +49,7 @@ function matches(developer, query) {
   const haystack = [
     developer.displayName,
     developer.username,
-    ...(developer.acceptedPlatforms ?? []).map((platform) => t(`platform.${platform}`)),
+    ...(developer.acceptedPlatforms ?? []).map((platform) => platformLabel(platform)),
   ]
     .join("\n")
     .toLowerCase();

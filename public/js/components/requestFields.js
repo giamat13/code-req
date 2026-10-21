@@ -6,6 +6,7 @@ import { BUDGET_RANGES, LIMITS, TEMPLATES } from "../domain/constants.js";
 import { prepareSvg, svgDataUri } from "../domain/svg.js";
 import { todayIso } from "../domain/time.js";
 import { errorText, pillField, selectField, textField } from "./forms.js";
+import { platformLabel } from "./ui.js";
 
 // Fields a requester fills in for a request. Used by the public form and by the tracking page editor.
 // Order matters: setErrors and focusFirstError follow it.
@@ -182,7 +183,7 @@ export function createRequestFields({ acceptedPlatforms, initial = {} }) {
       label: t("form.platforms"),
       options: acceptedPlatforms.map((platform) => ({
         value: platform,
-        label: t(`platform.${platform}`),
+        label: platformLabel(platform),
       })),
       selected: initial.platforms ?? [],
       required: true,

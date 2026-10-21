@@ -4,9 +4,9 @@ import { t } from "../../core/i18n.js";
 import { describeError } from "../../core/errors.js";
 import { setStatus } from "../../core/page.js";
 import { developerUrl, pageUrl } from "../../core/router.js";
-import { checkboxField, pillField, textField } from "../../components/forms.js";
+import { checkboxField, textField } from "../../components/forms.js";
+import { createPlatformPicker } from "../../components/platformPicker.js";
 import { copyButton, linkButton } from "../../components/ui.js";
-import { PLATFORMS } from "../../domain/constants.js";
 import { normalizeUsername, slugifyUsername, usernameError } from "../../domain/usernames.js";
 import { validateProfile } from "../../domain/validation.js";
 import { claimUsername, isUsernameTaken } from "../../services/developers.js";
@@ -35,14 +35,7 @@ export function renderOnboarding(user) {
     autocomplete: "name",
     max: 60,
   });
-  const platforms = pillField({
-    name: "acceptedPlatforms",
-    label: t("onboarding.platforms"),
-    options: PLATFORMS.map((platform) => ({ value: platform, label: t(`platform.${platform}`) })),
-    selected: PLATFORMS,
-    required: true,
-    help: t("onboarding.platformsHelp"),
-  });
+  const platforms = createPlatformPicker();
   const accepting = checkboxField({
     name: "acceptingRequests",
     label: t("onboarding.accepting"),
@@ -112,12 +105,14 @@ export function renderOnboarding(user) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const name = normalizeUsername(username.read());
+    const picked = platforms.read();
     const validation = validateProfile({
       displayName: displayName.read(),
-      acceptedPlatforms: platforms.read(),
+      acceptedPlatforms: picked.list ?? [],
       acceptingRequests: accepting.read(),
     });
     const errors = { ...validation.errors };
+    if (picked.error) errors.acceptedPlatforms = picked.error;
     const problem = usernameError(name);
     if (problem) errors.username = { key: problem };
     username.setError(errors.username ?? null);
