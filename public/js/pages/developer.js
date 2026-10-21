@@ -8,6 +8,7 @@ import { developerUrl, getParam, pageUrl, trackUrl } from "../core/router.js";
 import { storage } from "../core/storage.js";
 import { checkboxField } from "../components/forms.js";
 import { createContactFields } from "../components/contactFields.js";
+import { createProfileForm } from "../components/profileForm.js";
 import { createRequestFields } from "../components/requestFields.js";
 import {
   avatar,
@@ -23,15 +24,17 @@ import { COOLDOWN_SECONDS, DRAFT_DEBOUNCE_MS } from "../domain/constants.js";
 import { extractUsername, usernameError } from "../domain/usernames.js";
 import { contactState, validateContact, validateRequestForm } from "../domain/validation.js";
 import { withTimeout } from "../core/timeout.js";
+import { ensureRequesterSession, watchSignIn } from "../services/auth.js";
 import { findDeveloper } from "../services/developers.js";
 import { createRequest } from "../services/requests.js";
-import { ensureRequesterSession } from "../services/auth.js";
+import { toast } from "../core/toast.js";
 
 const LAST_SUBMIT_KEY = "apprequest.lastSubmit";
 const draftKey = (username) => `apprequest.draft.v1:${username}`;
 
 const state = {
   developer: null,
+  viewerUid: null,
   fields: null,
   contact: null,
   consent: null,
@@ -39,7 +42,9 @@ const state = {
   cooldownTimer: null,
 };
 
+// Only the owner of the profile sees the edit button. The rules check the same thing when the profile is saved.
 function profileHeader(developer) {
+  const isOwner = state.viewerUid !== null && state.viewerUid === developer.uid;
   const website = developer.website
     ? h(
         "a",
@@ -85,6 +90,17 @@ function profileHeader(developer) {
       h(
         "div",
         { class: "profile-actions" },
+        isOwner
+          ? h(
+              "button",
+              {
+                type: "button",
+                class: "btn btn-secondary btn-sm",
+                onclick: () => openProfileEditor(developer),
+              },
+              t("developer.editProfile"),
+            )
+          : null,
         copyButton({
           getText: () => new URL(developerUrl(developer.username), location.href).href,
           label: t("developer.copyLink"),
@@ -452,7 +468,30 @@ function renderForm(developer) {
   applyCooldown($("#submit-request"));
 }
 
+function openProfileEditor(developer) {
+  const section = $("#profile-edit");
+  section.hidden = false;
+  section.replaceChildren(
+    createProfileForm(developer, {
+      onSaved: (saved) => {
+        closeProfileEditor();
+        toast(t("developer.profileSaved"));
+        renderDeveloper(saved);
+      },
+      onCancel: closeProfileEditor,
+    }),
+  );
+  section.querySelector("input, textarea")?.focus();
+}
+
+function closeProfileEditor() {
+  const section = $("#profile-edit");
+  section.hidden = true;
+  section.replaceChildren();
+}
+
 function renderDeveloper(developer) {
+  state.developer = developer;
   document.title = t("developer.pageTitle", { name: developer.displayName });
   $("#developer-header").replaceChildren(profileHeader(developer));
   if (developer.suspended || developer.unavailable) {
@@ -508,6 +547,14 @@ async function load() {
 function retry() {
   $("#developer-main").replaceChildren(h("p", { class: "muted" }, t("common.loading")));
   load();
+}
+
+// The owner check needs the signed-in user, which arrives after the page starts. Re-render the header when it does.
+if (isConfigured) {
+  watchSignIn((user) => {
+    state.viewerUid = user?.uid ?? null;
+    if (state.developer) $("#developer-header").replaceChildren(profileHeader(state.developer));
+  });
 }
 
 startPage(load);

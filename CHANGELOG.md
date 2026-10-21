@@ -12,6 +12,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Project foundation: repository files, pinned tooling, ESLint and Prettier configuration,
   continuous integration, GitHub Pages and Firebase workflows, and architecture decision records.
 
+### Added
+
+- Developers can edit their own profile on their page: display name, bio, website, pricing note,
+  the platforms they build for (built-in and their own), and whether they accept requests. The
+  username cannot change.
+
 ### Changed
 
 - The request budget is a range of whole numbers, entered as "from" and "to", in place of fixed
