@@ -269,6 +269,22 @@ describe("usernames and developer profiles", () => {
     );
   });
 
+  test("an owner can set the AI flag to a boolean, but not to anything else", async () => {
+    await seed();
+    await assertSucceeds(
+      updateDoc(doc(signedIn(DEV), "developers", DEV), {
+        usesAi: true,
+        updatedAt: serverTimestamp(),
+      }),
+    );
+    await assertFails(
+      updateDoc(doc(signedIn(DEV), "developers", DEV), {
+        usesAi: "yes",
+        updatedAt: serverTimestamp(),
+      }),
+    );
+  });
+
   test("an owner cannot change the username", async () => {
     await seed();
     await assertFails(

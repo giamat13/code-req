@@ -183,6 +183,7 @@ export function validateProfile(input) {
     pricingNote: optional(input.pricingNote),
     acceptedPlatforms: accepted.value,
     acceptingRequests: Boolean(input.acceptingRequests),
+    usesAi: Boolean(input.usesAi),
   };
 
   const errors = collect([

@@ -55,6 +55,12 @@ export function createProfileForm(developer, { onSaved, onCancel }) {
     checked: developer.acceptingRequests === true,
     help: t("onboarding.acceptingHelp"),
   });
+  const usesAi = checkboxField({
+    name: "usesAi",
+    label: t("developer.usesAi"),
+    checked: developer.usesAi === true,
+    help: t("developer.usesAiHelp"),
+  });
   const status = h("p", {
     class: "form-status",
     role: "status",
@@ -77,6 +83,7 @@ export function createProfileForm(developer, { onSaved, onCancel }) {
     pricingNote.root,
     platforms.root,
     accepting.root,
+    usesAi.root,
     h(
       "div",
       { class: "form-actions" },
@@ -100,6 +107,7 @@ export function createProfileForm(developer, { onSaved, onCancel }) {
       pricingNote: pricingNote.read(),
       acceptedPlatforms: picked.list ?? [],
       acceptingRequests: accepting.read(),
+      usesAi: usesAi.read(),
     });
     const errors = { ...validation.errors };
     if (picked.error) errors.acceptedPlatforms = picked.error;

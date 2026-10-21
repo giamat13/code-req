@@ -22,6 +22,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 - Developers can edit their own profile on their page: display name, bio, website, pricing note,
   the platforms they build for (built-in and their own), and whether they accept requests. The
   username cannot change.
+- Developers can tick "I use AI to write code" on their profile. The flag is stored as `usesAi`.
+  Firestore rules change with it, so the rules must be deployed before the profile form is used.
 
 ### Changed
 

@@ -317,6 +317,8 @@
   "developer.websiteHelp": "אופציונלי. חייב להתחיל ב-https://.",
   "developer.pricingNote": "הערת תמחור",
   "developer.pricingNoteHelp": "אופציונלי, למשל: החל מ-500 דולר לאפליקציה קטנה.",
+  "developer.usesAi": "אני משתמש ב-AI כדי לתכנת",
+  "developer.usesAiHelp": "סמן אם אתה משתמש בכלי AI, כמו עוזרי תכנות, כשאתה בונה אפליקציות.",
   "developer.share": "שיתוף",
   "developer.backToDirectory": "חזרה לספרייה",
   "developer.formTitle": "בקשת אפליקציה",

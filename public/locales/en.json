@@ -317,6 +317,8 @@
   "developer.websiteHelp": "Optional. Must start with https://.",
   "developer.pricingNote": "Pricing note",
   "developer.pricingNoteHelp": "Optional, for example: from 500 USD for a small app.",
+  "developer.usesAi": "I use AI to write code",
+  "developer.usesAiHelp": "Tick this if you use AI tools, such as coding assistants, when you build apps.",
   "developer.share": "Share",
   "developer.backToDirectory": "Back to the directory",
   "developer.formTitle": "Request an app",

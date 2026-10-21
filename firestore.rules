@@ -81,7 +81,7 @@ service cloud.firestore {
 
     function isProfile(d) {
       return d.keys().hasOnly(['username', 'displayName', 'bio', 'website', 'pricingNote', 'avatarUrl',
-                               'acceptedPlatforms', 'acceptingRequests', 'suspended', 'createdAt', 'updatedAt'])
+                               'acceptedPlatforms', 'acceptingRequests', 'usesAi', 'suspended', 'createdAt', 'updatedAt'])
         && isText(d.displayName, 1, 60)
         && isOptionalText(d.bio, 280)
         && isOptionalText(d.pricingNote, 120)
@@ -89,6 +89,7 @@ service cloud.firestore {
         && isHttpsOrNull(d.avatarUrl, 500)
         && isPlatforms(d.acceptedPlatforms)
         && d.acceptingRequests is bool
+        && (d.usesAi == null || d.usesAi is bool)
         && d.suspended is bool;
     }
 
