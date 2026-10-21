@@ -131,6 +131,7 @@
   "errors.consent": "Please confirm before sending.",
   "errors.network": "Could not reach the server. Check your connection and try again.",
   "errors.networkBody": "The connection failed. Try again in a moment.",
+  "errors.retry": "Try again",
   "errors.permission": "You do not have permission to do that.",
   "errors.generic": "Something went wrong. Please try again.",
   "errors.svg.empty": "Add an SVG file or paste its code.",

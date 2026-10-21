@@ -6,6 +6,7 @@ import {
   getFirestore,
   GoogleAuthProvider,
   initializeApp,
+  initializeFirestore,
 } from "../firebase-sdk.js";
 
 // Local development uses the Emulator Suite, so no real project or billing account is needed.
@@ -22,7 +23,11 @@ export const isConfigured = onLocalhost || !firebaseConfig.projectId.startsWith(
 
 const app = initializeApp(onLocalhost ? demoConfig : firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+// On localhost, Firestore falls back to long polling when the streaming connection is blocked or stalls. Some local
+// proxies and security filters stall streams, and without the fallback every read waits until the page gives up.
+export const db = onLocalhost
+  ? initializeFirestore(app, { experimentalAutoDetectLongPolling: true })
+  : getFirestore(app);
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: "select_account" });
 

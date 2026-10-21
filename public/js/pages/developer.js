@@ -111,19 +111,26 @@ function profileHeader(developer) {
   );
 }
 
-function setStateMessage(title, body) {
-  $("#developer-main").replaceChildren(
-    emptyState({
-      iconName: "alert",
-      title,
-      body,
-      action: linkButton({
-        href: "index.html",
-        label: t("developer.backToDirectory"),
-        className: "btn btn-primary",
-      }),
-    }),
-  );
+// onRetry adds a "Try again" button for failures that may clear up on their own, such as a dropped connection.
+function setStateMessage(title, body, { onRetry = null } = {}) {
+  const back = linkButton({
+    href: "index.html",
+    label: t("developer.backToDirectory"),
+    className: onRetry ? "btn btn-secondary" : "btn btn-primary",
+  });
+  const action = onRetry
+    ? h(
+        "div",
+        { class: "form-actions" },
+        h(
+          "button",
+          { type: "button", class: "btn btn-primary", onclick: onRetry },
+          t("errors.retry"),
+        ),
+        back,
+      )
+    : back;
+  $("#developer-main").replaceChildren(emptyState({ iconName: "alert", title, body, action }));
 }
 
 function errorMessageFor(error) {
@@ -485,8 +492,13 @@ async function load() {
     }
     renderDeveloper(developer);
   } catch {
-    setStateMessage(t("errors.network"), t("errors.networkBody"));
+    setStateMessage(t("errors.network"), t("errors.networkBody"), { onRetry: retry });
   }
+}
+
+function retry() {
+  $("#developer-main").replaceChildren(h("p", { class: "muted" }, t("common.loading")));
+  load();
 }
 
 startPage(load);

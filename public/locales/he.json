@@ -131,6 +131,7 @@
   "errors.consent": "יש לאשר לפני השליחה.",
   "errors.network": "לא ניתן להתחבר לשרת. בדוק את החיבור ונסה שוב.",
   "errors.networkBody": "החיבור נכשל. נסה שוב בעוד רגע.",
+  "errors.retry": "נסה שוב",
   "errors.permission": "אין לך הרשאה לבצע את הפעולה הזאת.",
   "errors.generic": "משהו השתבש. נסה שוב.",
   "errors.svg.empty": "יש להעלות קובץ SVG או להדביק את הקוד שלו.",
