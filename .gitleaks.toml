@@ -1,0 +1,10 @@
+title = "code-req gitleaks config"
+
+[extend]
+useDefault = true
+
+# The Firebase web configuration identifies the project and is not a secret (ADR 0016).
+# Security comes from the Firestore and Auth rules, so the API key in this file is expected.
+[[allowlists]]
+description = "Firebase web config is public by design"
+paths = ['''public/js/firebase-config\.js''']

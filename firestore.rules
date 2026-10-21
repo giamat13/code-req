@@ -89,7 +89,7 @@ service cloud.firestore {
         && isHttpsOrNull(d.avatarUrl, 500)
         && isPlatforms(d.acceptedPlatforms)
         && d.acceptingRequests is bool
-        && (d.usesAi == null || d.usesAi is bool)
+        && (d.get('usesAi', null) == null || d.get('usesAi', null) is bool)
         && d.suspended is bool;
     }
 
@@ -114,7 +114,7 @@ service cloud.firestore {
                                'appDescription', 'platforms', 'svgIcon', 'notes', 'template',
                                'budgetMin', 'budgetMax', 'deadline', 'status', 'quote', 'lastMessageAt',
                                'hasContact', 'requesterUid', 'createdAt', 'updatedAt'])
-        && d.keys().size() == 19
+        && d.keys().size() == 20
         && dev.suspended == false
         && dev.acceptingRequests == true
         && d.developerUsername == dev.username
