@@ -5,5 +5,5 @@ import { firebaseConfig } from "../firebase-config.js";
 export const onLocalhost = ["localhost", "127.0.0.1"].includes(location.hostname);
 // Address of the shared Claude connector (a Cloudflare Worker, see connector/README.md). While it is a
 // REPLACE_WITH_ placeholder the "Connect Claude" card stays hidden.
-export const connectorUrl = "REPLACE_WITH_CONNECTOR_URL";
+export const connectorUrl = "https://apprequest-connector.furst-itamar.workers.dev";
 export const isConfigured = onLocalhost || !firebaseConfig.projectId.startsWith("REPLACE_WITH_");
