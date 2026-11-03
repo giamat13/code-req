@@ -2,6 +2,16 @@
 
 A remote MCP server (claude.ai custom connector) that lets Claude read and do what the AppRequest UI does, and shows inline cards (MCP Apps) for the results. It talks to Firebase over REST and signs in as a normal Firebase user, so `firestore.rules` stay the security boundary.
 
+## Set up in 3 steps
+
+1. Click [**Deploy to Cloudflare**](https://deploy.workers.cloudflare.com/?url=https://github.com/GIAMAT13/code-req/tree/main/connector) (free, sign in with GitHub, no card, no Vercel). Cloudflare copies the repo, deploys it, and asks for three values:
+   - `DEV_EMAIL` and `DEV_PASSWORD`: the email and password you use to sign in to the app. Needed only for developer tools; requester tools work without them.
+   - `MCP_SECRET`: any long random text (30+ characters). It protects your connector.
+2. Wait for the deploy to finish and copy the address, for example `https://apprequest-connector.<you>.workers.dev`.
+3. In claude.ai open Settings, Connectors, Add custom connector, and paste `https://<your-address>/mcp?key=<MCP_SECRET>`.
+
+Using Google sign-in only? Set a password for the same email once with "forgot password" so the connector can sign in.
+
 ## Tools (23)
 
 | Tool                                           | Who                    | What it does                                                        |
@@ -33,7 +43,7 @@ Not possible from a server: theme and language (per-browser settings), SVG icons
 
 ## Security
 
-Developer tools act as one Firebase account (`DEV_EMAIL` / `DEV_PASSWORD`). Because of that the endpoint refuses to run without `MCP_SECRET` when those are set, and the secret travels in the URL (`/mcp?key=...`) or as a Bearer token. Treat the full URL like a password. Use a dedicated account, not your main one.
+Developer tools act as one Firebase account (`DEV_EMAIL` / `DEV_PASSWORD`). Because of that the endpoint refuses to run without `MCP_SECRET` when those are set, and the secret travels in the URL (`/mcp?key=...`) or as a Bearer token. Treat the full URL like a password. It signs in with your own developer account from the app, so no separate user is needed.
 
 ## Run and test
 
