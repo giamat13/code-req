@@ -37,7 +37,7 @@ export default [
     },
   },
   {
-    files: ["scripts/**/*.mjs", "test/**/*.mjs", "*.mjs"],
+    files: ["scripts/**/*.mjs", "connector/scripts/**/*.mjs", "test/**/*.mjs", "*.mjs"],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: "module",
