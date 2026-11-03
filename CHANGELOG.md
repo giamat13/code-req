@@ -9,6 +9,8 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- `connector/`: a remote MCP server (claude.ai custom connector, Vercel) with 23 tools to read and
+  do what the UI does, plus inline cards. It does not change Firestore rules or the public site.
 - Project foundation: repository files, pinned tooling, ESLint and Prettier configuration,
   continuous integration, GitHub Pages and Firebase workflows, and architecture decision records.
 
