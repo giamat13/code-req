@@ -27,7 +27,9 @@ const { refreshToken } = (await signUp.json()) as { refreshToken: string };
 async function call(key: string, name: string): Promise<{ text: string; isError: boolean }> {
   const client = new Client({ name: "link-test", version: "1.0.0" });
   await client.connect(
-    new StreamableHTTPClientTransport(new URL(`${base}${key ? `?key=${encodeURIComponent(key)}` : ""}`)),
+    new StreamableHTTPClientTransport(
+      new URL(`${base}${key ? `?key=${encodeURIComponent(key)}` : ""}`),
+    ),
   );
   const r: any = await client.callTool({ name, arguments: {} });
   await client.close();
@@ -41,13 +43,21 @@ function check(label: string, ok: boolean, detail: string) {
 }
 
 const guide = await call(refreshToken, "app_guide");
-check("valid link: connected", /Connected/.test(guide.text), guide.text.match(/Developer actions.*/)?.[0] ?? guide.text);
+check(
+  "valid link: connected",
+  /Connected/.test(guide.text),
+  guide.text.match(/Developer actions.*/)?.[0] ?? guide.text,
+);
 const mine = await call(refreshToken, "get_my_profile");
 check("valid link: acts as the user", !mine.isError, mine.text);
 const wrong = await call("x".repeat(60), "get_my_profile");
 check("wrong key: refused", wrong.isError, wrong.text);
 const none = await call("", "app_guide");
-check("no key: public mode only", /Not connected/.test(none.text), none.text.match(/Developer actions.*/)?.[0] ?? none.text);
+check(
+  "no key: public mode only",
+  /Not connected/.test(none.text),
+  none.text.match(/Developer actions.*/)?.[0] ?? none.text,
+);
 
 console.log(`\nProblems: ${bad}`);
 process.exit(bad ? 1 : 0);
