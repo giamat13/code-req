@@ -1,5 +1,6 @@
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import { createServer } from "./server.js";
+import { withKey } from "./lib/session.js";
 
 const CORS: Record<string, string> = {
   "access-control-allow-origin": "*",
@@ -37,12 +38,30 @@ function same(a: string, b: string): boolean {
  * MCP_SECRET is required whenever DEV_EMAIL/DEV_PASSWORD are set. Send it as `?key=...` (claude.ai custom
  * connectors take a URL) or as `Authorization: Bearer ...`. Without developer credentials the server is public-data only.
  */
+function keyOf(request: Request): string {
+  const bearer = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
+  return bearer || new URL(request.url).searchParams.get("key") || "";
+}
+
+/**
+ * Two ways to act as a developer:
+ * - Personal link (default): `?key=` holds the user's own Firebase refresh token. It is checked when it is
+ *   traded for an ID token, so a wrong key can do nothing, and rules apply to that user only.
+ * - Legacy single account: MCP_SECRET + DEV_EMAIL/DEV_PASSWORD. The key equals MCP_SECRET and is not a token.
+ * With no key the server is public-data only (requester tools).
+ */
+function isLegacyKey(key: string): boolean {
+  const secret = process.env.MCP_SECRET;
+  return Boolean(secret) && same(key, secret as string);
+}
 function authorized(request: Request): boolean {
   const secret = process.env.MCP_SECRET;
-  if (!secret) return !(process.env.DEV_EMAIL && process.env.DEV_PASSWORD);
-  const bearer = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ?? "";
-  const key = new URL(request.url).searchParams.get("key") ?? "";
-  return same(bearer, secret) || same(key, secret);
+  if (secret && process.env.DEV_EMAIL && process.env.DEV_PASSWORD) {
+    // Legacy deployments stay protected: the secret is required when a shared login is configured.
+    const key = keyOf(request);
+    return isLegacyKey(key) || key.length > 40;
+  }
+  return true;
 }
 
 /** Stateless Streamable HTTP: a fresh server + transport per request, no sessions. */
@@ -64,8 +83,11 @@ export async function handleMcp(request: Request): Promise<Response> {
     enableJsonResponse: true,
   });
   await server.connect(transport);
+  const key = keyOf(request);
+  // A personal link (refresh token) is put in scope for this request only; the legacy secret is not a token.
+  const run = () => transport.handleRequest(request);
   try {
-    return withCors(await transport.handleRequest(request));
+    return withCors(await (key && !isLegacyKey(key) ? withKey(key, run) : run()));
   } finally {
     // Close after the response has been produced; nothing is kept between requests.
     queueMicrotask(() => void server.close().catch(() => {}));

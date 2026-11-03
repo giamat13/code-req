@@ -5,7 +5,7 @@ import {
   SERVER_TIME,
   commit,
   developer,
-  developerConfigured,
+  developerAvailable,
   getDoc,
   newId,
   query,
@@ -136,7 +136,7 @@ function requestRow(r: Doc) {
 }
 
 async function maybeOwnerUid(): Promise<string | null> {
-  if (!developerConfigured()) return null;
+  if (!developerAvailable()) return null;
   try {
     return (await developer()).uid;
   } catch {
@@ -230,7 +230,7 @@ export function createServer(): McpServer {
     {},
     READ,
     async () => {
-      const dev = developerConfigured();
+      const dev = developerAvailable();
       const rows: [string, string][] = [
         ["What it is", "Free site where people request apps from developers, no account needed"],
         ["Site", SITE],
@@ -240,8 +240,8 @@ export function createServer(): McpServer {
         [
           "Developer actions",
           dev
-            ? "Configured (acts as the connector's developer account)"
-            : "NOT configured: set DEV_EMAIL and DEV_PASSWORD",
+            ? "Connected (acts as the signed-in developer)"
+            : "Not connected: add your personal link from the app (dashboard, Connect Claude)",
         ],
         [
           "Requester actions",

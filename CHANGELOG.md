@@ -9,8 +9,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
-- `connector/`: a remote MCP server (claude.ai custom connector, Vercel) with 23 tools to read and
-  do what the UI does, plus inline cards. It does not change Firestore rules or the public site.
+- `connector/`: a remote MCP server (claude.ai custom connector, Cloudflare Workers or Vercel) with
+  23 tools to read and do what the UI does, plus inline cards. It does not change Firestore rules.
+- "Connect Claude" card on the developer dashboard: creates a personal link that lets Claude act as
+  the signed-in developer, with no extra account. The card stays hidden until `connectorUrl` in
+  `public/js/core/config.js` is set.
 - Project foundation: repository files, pinned tooling, ESLint and Prettier configuration,
   continuous integration, GitHub Pages and Firebase workflows, and architecture decision records.
 

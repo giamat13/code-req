@@ -28,6 +28,7 @@ import {
   SORTS,
   sortRequests,
 } from "../../domain/filters.js";
+import { renderConnectClaude } from "../../components/connectClaude.js";
 import { getPrivateNotes, setRequestStatus, watchOwnRequests } from "../../services/requests.js";
 import { toDate } from "../../domain/time.js";
 
@@ -460,6 +461,7 @@ export function mountRequests(developer, user) {
   state.uid = user.uid;
   wireOnce();
   renderLink(developer);
+  renderConnectClaude($("#connect-claude"), user);
   $("#requests-view").replaceChildren(...skeletonRows(4));
   state.stop = watchOwnRequests(user.uid, onRequests, () =>
     setStatus($("#requests-count"), t("errors.network"), { error: true }),

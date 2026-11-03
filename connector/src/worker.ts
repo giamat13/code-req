@@ -7,7 +7,9 @@ export default {
     const url = new URL(request.url);
     // The connector lives at /mcp. Anything else gets a plain hint, not an error page.
     if (url.pathname !== "/mcp" && url.pathname !== "/") {
-      return Promise.resolve(new Response("AppRequest connector. Use /mcp?key=<MCP_SECRET>.", { status: 404 }));
+      return Promise.resolve(
+        new Response("AppRequest connector. Use /mcp?key=<MCP_SECRET>.", { status: 404 }),
+      );
     }
     return handleMcp(request);
   },

@@ -1,6 +1,7 @@
 // Firestore + Firebase Auth over plain REST. No Firebase SDK: the connector is stateless and runs on Vercel.
 // The connector acts as a normal signed-in Firebase user, so firestore.rules stay the security boundary.
 import { UpstreamError } from "./http.js";
+import { currentKey, sessionFromRefreshToken } from "./session.js";
 
 const EMULATOR = process.env.FIREBASE_EMULATOR === "1";
 const API_KEY = process.env.FIREBASE_API_KEY ?? "AIzaSyDYzzTJIcnceHrnJlROrDyGRt0FtM0oeog"; // public web key, not a secret
@@ -97,11 +98,25 @@ async function handle(res: Response): Promise<any> {
   throw new UpstreamError(`Firebase error: ${msg}`, "Firebase", res.status);
 }
 
-/** Signs in as the developer account configured in DEV_EMAIL / DEV_PASSWORD. Cached while the token is valid. */
+/** True when this request carries a personal link, or the legacy DEV_EMAIL / DEV_PASSWORD login is configured. */
+export const developerAvailable = () => Boolean(currentKey()) || developerConfigured();
+
+/**
+ * The signed-in developer for this request: the owner of the personal link (refresh token in `?key=`),
+ * or the legacy account from DEV_EMAIL / DEV_PASSWORD. Cached while the token is valid.
+ */
 export async function developer(): Promise<Session> {
+  const key = currentKey();
+  if (key) {
+    try {
+      return await sessionFromRefreshToken(key, API_KEY);
+    } catch (e) {
+      throw new UpstreamError(e instanceof Error ? e.message : String(e), "Firebase Auth", 401);
+    }
+  }
   if (!developerConfigured())
     throw new UpstreamError(
-      "Developer actions are not configured on this connector: set DEV_EMAIL and DEV_PASSWORD (a Firebase email/password developer account).",
+      'Developer actions need your personal link. Open AppRequest, go to the dashboard, choose "Connect Claude", and add that link as the connector.',
       "Connector",
     );
   if (session && session.expires > Date.now() + 60_000) return session;
