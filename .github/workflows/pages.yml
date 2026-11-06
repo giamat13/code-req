@@ -23,7 +23,7 @@ jobs:
       - uses: actions/configure-pages@v5
         id: pages
       # Only Node's built-in modules run here, so no npm install is needed.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
       # The Firebase config is committed in public/js/firebase-config.js, so only the site URL is filled here.
